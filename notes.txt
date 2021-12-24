@@ -1,0 +1,13 @@
+Folder structure:
+Components
+	Content
+	Images
+	Scripts
+	Snippets
+Site
+
+Files:
+Content files
+Snippet files
+Configuration file
+	contains global settings and user defined variables.
