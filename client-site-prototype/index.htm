@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Site Prototype</title>
+    <link rel="stylesheet" href="styles/normalize.css">
+    <link rel="stylesheet" href="styles/main.css" />
+</head>
+
+<body>
+    <header>
+        <!-- contains banner & stuff-->
+        <h1>Website</h1>
+    </header>
+    <nav id="menu">
+        <label for="tm" id="toggle-menu">Navigation <span class="drop-icon">▾</span></label>
+        <input type="checkbox" id="tm">
+        <ul class="main-menu cf">
+            <li><a href="#">Sample</a></li>
+            <li><a href="#">Dropdown
+                    <span class="drop-icon">▾</span>
+                    <label title="Toggle Drop-down" class="drop-icon" for="sm0">▾</label>
+                </a>
+                <input type="checkbox" id="sm0">
+                <ul class="sub-menu">
+                    <li><a href="#">Item 1.1</a></li>
+                    <li><a href="#">Item 1.2</a></li>
+                    <li><a href="#">Item 1.3</a></li>
+                    <li><a href="#">Item 1.4</a></li>
+                </ul>
+            </li>
+            <li><a href="#">2-level DD
+                    <span class="drop-icon">▾</span>
+                    <label title="Toggle Drop-down" class="drop-icon" for="sm1">▾</label>
+                </a>
+                <input type="checkbox" id="sm1">
+                <ul class="sub-menu">
+                    <li><a href="#">Item 2.1</a></li>
+                    <li><a href="#">Item 2.2
+                            <span class="drop-icon">▸</span>
+                            <label title="Toggle Drop-down" class="drop-icon" for="sm2">▾</label>
+                        </a>
+                        <input type="checkbox" id="sm2">
+                        <ul class="sub-menu">
+                            <li><a href="#">Item 2.2.1</a></li>
+                            <li><a href="#">Item 2.2.2</a></li>
+                            <li><a href="#">Item 2.2.3</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Item 2.3</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Multiple Levels
+                    <span class="drop-icon">▾</span>
+                    <label title="Toggle Drop-down" class="drop-icon" for="sm3">▾</label>
+                </a>
+                <input type="checkbox" id="sm3">
+                <ul class="sub-menu">
+                    <li><a href="">3.1
+                            <span class="drop-icon">▸</span>
+                            <label title="Toggle Drop-down" class="drop-icon" for="sm4">▾</label>
+                        </a>
+                        <input type="checkbox" id="sm4">
+                        <ul class="sub-menu">
+                            <li><a href="">3.1.1</a></li>
+                            <li><a href="">3.1.2</a></li>
+                            <li><a href="">3.1.3</a></li>
+                            <li><a href="">3.1.4</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="">3.2
+                            <span class="drop-icon">▸</span>
+                            <label title="Toggle Drop-down" class="drop-icon" for="sm5">▾</label>
+                        </a>
+                        <input type="checkbox" id="sm5">
+                        </a>
+                        <ul class="sub-menu">
+                            <li><a href="">3.2.1</a></li>
+                            <li><a href="">3.2.2</a></li>
+                            <li><a href="">3.2.3</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="">3.3
+                            <span class="drop-icon">▸</span>
+                            <label title="Toggle Drop-down" class="drop-icon" for="sm6">▾</label>
+                        </a>
+                        <input type="checkbox" id="sm6">
+                        </a>
+                        <ul class="sub-menu">
+                            <li><a href="">3.3.1</a></li>
+                            <li><a href="">3.3.2</a></li>
+                            <li><a href="">3.2.2</a></li>
+                            <li><a href="">3.3.4</a></li>
+                            <li><a href="">3.3.5</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><a href="#">Sample #2</a></li>
+            <li><a href="#">Another DD
+                    <span class="drop-icon">▾</span>
+                    <label title="Toggle Drop-down" class="drop-icon" for="sm8">▾</label>
+                </a>
+                <input type="checkbox" id="sm8">
+                </a>
+                <ul class="sub-menu">
+                    <li><a href="">4.1</a></li>
+                    <li><a href="">4.2</a></li>
+                    <li><a href="">4.2</a></li>
+                    <li><a href="">4.4</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <main>
+        <!-- contains page content -->
+        <!-- may contain sections and asides -->
+        <!-- section may contain an article -->
+        <section>
+            <article>
+                <h2>Example Content</h2>
+                <p>This is an example paragraph. I should have just used the loreum ipsum text, but I'm not that
+                    ambitious.</p>
+                <p>Another example paragraph! This one isn't as long.</p>
+            </article>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2022 Brian Haddad</p>
+    </footer>
+</body>
+
+</html>

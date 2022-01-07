@@ -1,3 +1,8 @@
+example modern site:
+https://spottedhorseranch.com/
+menu/nav:
+https://w3bits.com/css-responsive-nav-menu/
+
 Folder structure:
 Components
 	Content
