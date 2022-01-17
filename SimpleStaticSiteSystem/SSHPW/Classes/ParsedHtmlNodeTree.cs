@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SSHPW.Classes
+﻿namespace SSHPW.Classes
 {
     public class ParsedHtmlNodeTree
     {
+        public bool ContainsDocTypeDeclaration { get; set; }
+        public List<string> DocTypeValues { get; set; }
+        public HtmlNode RootNode { get; set; }
     }
 }
