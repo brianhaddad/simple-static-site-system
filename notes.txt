@@ -3,6 +3,9 @@ https://spottedhorseranch.com/
 menu/nav:
 https://w3bits.com/css-responsive-nav-menu/
 
+first tag (document type delcaration)
+https://en.wikipedia.org/wiki/Document_type_declaration
+
 Folder structure:
 Components
 	Content
