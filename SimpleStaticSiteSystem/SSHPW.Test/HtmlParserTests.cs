@@ -1,18 +1,27 @@
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SSHPW.Test
 {
-    public class Tests
+    [TestClass]
+    public class HtmlParserTests
     {
-        [SetUp]
+        private HtmlParser _parser;
+
+        [TestInitialize]
         public void Setup()
         {
+            _parser = new HtmlParser(new HtmlStringSanitizer());
         }
 
-        [Test]
-        public void Test1()
+        [TestMethod]
+        public void TestMethod1()
         {
-            Assert.Pass();
+            // Arrange
+
+            // Act
+
+            // Assert
+
         }
     }
 }
