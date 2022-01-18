@@ -9,6 +9,16 @@ namespace SSHPW.Test
         private HtmlStringSanitizer _sanitizer;
         private const char TAB_CHARACTER = '	';
         private const string DOUBLE_SPACE = "  ";
+        private const string MULTILINE_TAG_EXPECTED = "<tag attribute=true disabled />";
+        private string _testMultiLineTagText => @"<tag
+attribute=true
+disabled />";
+        private string[] _testMultiLineTagLines => new[]
+        {
+            "<tag",
+            "attribute=true",
+            "disabled />",
+        };
         private string[] _testLinesWithSpaceIndents => new[]
             {
                 "<!doctype HTML>",
@@ -76,6 +86,32 @@ namespace SSHPW.Test
 
             // Assert
             Assert.IsInstanceOfType(sanitized, typeof(string));
+        }
+
+        [TestMethod]
+        public void SanitizeMaintainsMultiLineAttributeSeparationInText()
+        {
+            // Arrange
+            var lines = _testMultiLineTagText;
+
+            // Act
+            var sanitized = _sanitizer.Sanitize(lines);
+
+            // Assert
+            Assert.AreEqual(MULTILINE_TAG_EXPECTED, sanitized);
+        }
+
+        [TestMethod]
+        public void SanitizeMaintainsMultiLineAttributeSeparationInLines()
+        {
+            // Arrange
+            var lines = _testMultiLineTagLines;
+
+            // Act
+            var sanitized = _sanitizer.Sanitize(lines);
+
+            // Assert
+            Assert.AreEqual(MULTILINE_TAG_EXPECTED, sanitized);
         }
 
         [TestMethod]
