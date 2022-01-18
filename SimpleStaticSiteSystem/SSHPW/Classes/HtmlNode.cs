@@ -1,9 +1,10 @@
 ﻿namespace SSHPW.Classes
 {
-    public class HtmlNode
+    public class HtmlNode : INode
     {
         public string TagName { get; set; }
-        public Dictionary<string, string> Attributes { get; set; }
-        public List<HtmlNode> Children { get; set; }
+        public List<HtmlNodeAttribute> Attributes { get; set; }
+        public bool IsSelfClosing { get; set; }
+        public List<INode> Children { get; set; }
     }
 }
