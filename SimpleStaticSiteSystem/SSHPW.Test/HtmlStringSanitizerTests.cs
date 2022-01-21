@@ -9,16 +9,6 @@ namespace SSHPW.Test
         private HtmlStringSanitizer _sanitizer;
         private const char TAB_CHARACTER = '	';
         private const string DOUBLE_SPACE = "  ";
-        private const string MULTILINE_TAG_EXPECTED = "<tag attribute=true disabled />";
-        private string _testMultiLineTagText => @"<tag
-attribute=true
-disabled />";
-        private string[] _testMultiLineTagLines => new[]
-        {
-            "<tag",
-            "attribute=true",
-            "disabled />",
-        };
         private string[] _testLinesWithSpaceIndents => new[]
             {
                 "<!doctype HTML>",
@@ -37,37 +27,19 @@ disabled />";
                 "<!doctype HTML>",
                 "<html>",
                 "    <head>",
-                "    	< title>My Test " + Environment.NewLine + " Page</title>",
+                "    	< title>My Test " + Environment.NewLine + " Page</title",
+                ">",
                 "    </head >",
-                "    <body>",
+                "    <",
+                "body",
+                ">",
                 "        <p>This     is some <em >weird</ em > text.< / p>",
                 "	     <hr  / >",
-                "    </body> ",
+                "    <",
+                "/",
+                "body> ",
                 "</html>",
             };
-        private string[] _testLinesWithTabIndents => new[]
-            {
-                "<!doctype HTML>",
-                "<html>",
-                "	<head>",
-                "		<title>My Test Page</title>",
-                "	</head>",
-                "	<body>",
-                "		<p>This is some <em>weird</em> text.</p>",
-                "		<hr />",
-                "	</body>",
-                "</html>",
-            };
-        private string _testTextWithNewLines => @"<!doctype HTML>
-<html>
-    <head>
-        <title>My Test Page</title>
-    </head>
-    <body>
-        <p>This is some <em>weird</em> text.</p>
-        <hr />
-    </body>
-</html>";
 
         [TestInitialize]
         public void Setup()
@@ -89,36 +61,43 @@ disabled />";
         }
 
         [TestMethod]
-        public void SanitizeMaintainsMultiLineAttributeSeparationInText()
-        {
-            // Arrange
-            var lines = _testMultiLineTagText;
-
-            // Act
-            var sanitized = _sanitizer.Sanitize(lines);
-
-            // Assert
-            Assert.AreEqual(MULTILINE_TAG_EXPECTED, sanitized);
-        }
-
-        [TestMethod]
         public void SanitizeMaintainsMultiLineAttributeSeparationInLines()
         {
             // Arrange
-            var lines = _testMultiLineTagLines;
+            var expected = @"<tag
+attribute=true
+disabled />";
+            var lines = new[]
+            {
+                "<tag",
+                "attribute=true",
+                "disabled />",
+            };
 
             // Act
             var sanitized = _sanitizer.Sanitize(lines);
 
             // Assert
-            Assert.AreEqual(MULTILINE_TAG_EXPECTED, sanitized);
+            Assert.AreEqual(expected, sanitized);
         }
 
         [TestMethod]
         public void SanitizeRemovesTabs()
         {
             // Arrange
-            var lines = _testLinesWithTabIndents;
+            var lines = new[]
+                {
+                "<!doctype HTML>",
+                "<html>",
+                "	<head>",
+                "		<title>My Test Page</title>",
+                "	</head>",
+                "	<body>",
+                "		<p>This is some <em>weird</em> text.</p>",
+                "		<hr />",
+                "	</body>",
+                "</html>",
+            };
 
             // Act
             var sanitized = _sanitizer.Sanitize(lines);
@@ -128,16 +107,28 @@ disabled />";
         }
 
         [TestMethod]
-        public void SanitizeRemovesNewLineCharacters()
+        public void SanitizeRemovesDoubleNewLineCharacters()
         {
             // Arrange
-            var text = _testTextWithNewLines;
+        var text = @"<!doctype HTML>
+<html>
+    <head>
+        <title>My Test Page</title>
+
+    </head>
+    <body>
+        <p>This is some <em>weird</em> text.</p>
+
+
+        <hr />
+    </body>
+</html>";
 
             // Act
             var sanitized = _sanitizer.Sanitize(text);
 
             // Assert
-            Assert.IsFalse(sanitized.Contains(Environment.NewLine));
+            Assert.IsFalse(sanitized.Contains(Environment.NewLine + Environment.NewLine));
 
         }
 
