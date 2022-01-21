@@ -1,4 +1,6 @@
-﻿namespace SSHPW
+﻿using System.Text.RegularExpressions;
+
+namespace SSHPW
 {
     public static class StringHelpers
     {
@@ -10,6 +12,8 @@
             }
             return text;
         }
+
+        public static string RegexReplace(this string text, string regex, string replacement) => Regex.Replace(text, regex, replacement);
 
         public static string Join(this string[] lines, string joiner) => string.Join(joiner, lines);
     }
