@@ -30,7 +30,6 @@ namespace SSHPW
 
         private void Process(HtmlNode node, int indentLevel)
         {
-            //TODO: have to do the thing for the current node at the current indent level
             if (ContainsImmediateChildTextNode(node))
             {
                 Lines.Add(Indent(indentLevel) + ProcessInlineNodes(node));
@@ -44,7 +43,6 @@ namespace SSHPW
                 Lines.Add(Indent(indentLevel) + OpenTag(node));
                 foreach (var child in node.Children)
                 {
-                    //TODO: this is just the basic idea, not the end goal!
                     Process(child, indentLevel + 1);
                 }
                 Lines.Add(Indent(indentLevel) + CloseTag(node));
@@ -100,7 +98,7 @@ namespace SSHPW
         {
             if (htmlDoc.ContainsDocTypeDeclaration && htmlDoc.DocTypeValues != null && htmlDoc.DocTypeValues.Count > 0)
             {
-                //TODO: this doesn't currently support the entire doctype standard.
+                //Note: this doesn't currently support the entire doctype standard.
                 var tag = $"<!DOCTYPE {htmlDoc.DocTypeValues.Join(" ")}>";
                 Lines.Add(tag);
             }
