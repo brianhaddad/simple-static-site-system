@@ -27,5 +27,13 @@ namespace SSHPW
             }
             return result;
         }
+
+        public static bool BeginsWith(this string text, string find, bool ignoreWhitespace = false)
+            => ignoreWhitespace
+                ? text.RemoveWhitespace().BeginsWith(find.RemoveWhitespace())
+                : text.StartsWith(find, StringComparison.CurrentCultureIgnoreCase);
+
+        public static string RemoveWhitespace(this string text)
+            => text.RegexReplace(@"(\r\n|\n|\r)", "").ReplaceAll(" ", "");
     }
 }

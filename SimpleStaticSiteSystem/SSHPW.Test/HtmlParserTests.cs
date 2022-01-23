@@ -17,7 +17,7 @@ namespace SSHPW.Test
                 "        <title>My Test Page</title>",
                 "    </head>",
                 "    <body>",
-                "        <p>This is some <em>weird</em> text.</p>",
+                "        <p class=\"test\">This is some <em>weird</em> text.</p>",
                 "        <hr />",
                 "    </body>",
                 "</html>",
@@ -50,7 +50,7 @@ namespace SSHPW.Test
         [TestInitialize]
         public void Setup()
         {
-            _parser = new HtmlParser(new HtmlStringSanitizer());
+            _parser = new HtmlParser(new HtmlStringSanitizer(), new HtmlPreParser());
         }
 
         [TestMethod]
@@ -104,6 +104,10 @@ namespace SSHPW.Test
 
             Assert.IsInstanceOfType(body.Children.First(), typeof(HtmlNode));
             var p = VerifyHtmlNode(body.Children.First(), "p", 0, 3, false);
+            Assert.IsNotNull(p.Attributes);
+            Assert.IsTrue(p.Attributes.Count == 1);
+            Assert.AreEqual("class", p.Attributes.First().Name);
+            Assert.AreEqual("test", p.Attributes.First().Value);
             VerifyTextContent(p.Children.First(), "This is some ");
             var em = VerifyHtmlNode(p.Children.ElementAt(1), "em", 0, 1, false);
             VerifyTextContent(em.Children.First(), "weird");
@@ -114,8 +118,8 @@ namespace SSHPW.Test
 
         private HtmlNode VerifyHtmlNode(HtmlNode node, string expectedTagName, int expectedAttributeCount, int expectedChildCount, bool expectedIsSelfClosing)
         {
-            Assert.IsFalse(node.IsTextOnlyNode);
             Assert.IsNotNull(node);
+            Assert.IsFalse(node.IsTextOnlyNode);
             Assert.AreEqual(expectedTagName, node.TagName);
             Assert.AreEqual(expectedAttributeCount, node.Attributes.Count);
             Assert.AreEqual(expectedChildCount, node.Children.Count);
@@ -125,8 +129,8 @@ namespace SSHPW.Test
 
         private void VerifyTextContent(HtmlNode node, string expectedText)
         {
-            Assert.IsTrue(node.IsTextOnlyNode);
             Assert.IsNotNull(node);
+            Assert.IsTrue(node.IsTextOnlyNode);
             Assert.AreEqual(expectedText, node.Text);
         }
     }

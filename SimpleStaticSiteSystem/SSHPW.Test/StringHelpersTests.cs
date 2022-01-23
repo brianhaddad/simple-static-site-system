@@ -72,5 +72,19 @@ namespace SSHPW.Test
             // Assert
             Assert.AreEqual(expectedResult, result);
         }
+
+        [TestMethod]
+        public void BeginsWith_ignores_case()
+        {
+            // Arrange
+            var testText = "<!doctype HTML><html></html>";
+            var findText = "<!DOCTYPE html>";
+
+            // Act
+            var result = testText.BeginsWith(findText);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
     }
 }
