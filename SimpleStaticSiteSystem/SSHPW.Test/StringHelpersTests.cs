@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace SSHPW.Test
 {
@@ -35,10 +36,29 @@ namespace SSHPW.Test
         }
 
         [TestMethod]
-        public void Join_does_join_properly()
+        public void Join_does_join_string_array_properly()
         {
             // Arrange
             var testTextArray = new[]
+            {
+                "one",
+                "two",
+                "three",
+            };
+            var expectedResult = "one-two-three";
+
+            // Act
+            var result = testTextArray.Join("-");
+
+            // Assert
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
+        public void Join_does_join_list_properly()
+        {
+            // Arrange
+            var testTextArray = new List<string>
             {
                 "one",
                 "two",

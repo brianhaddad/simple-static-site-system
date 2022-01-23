@@ -112,24 +112,22 @@ namespace SSHPW.Test
             VerifyHtmlNode(body.Children.Last(), "hr", 0, 0, true);
         }
 
-        private HtmlNode VerifyHtmlNode(INode node, string expectedTagName, int expectedAttributeCount, int expectedChildCount, bool expectedIsSelfClosing)
+        private HtmlNode VerifyHtmlNode(HtmlNode node, string expectedTagName, int expectedAttributeCount, int expectedChildCount, bool expectedIsSelfClosing)
         {
-            Assert.IsInstanceOfType(node, typeof(HtmlNode));
-            var htmlNode = (HtmlNode)node;
-            Assert.IsNotNull(htmlNode);
-            Assert.AreEqual(expectedTagName, htmlNode.TagName);
-            Assert.AreEqual(expectedAttributeCount, htmlNode.Attributes.Count);
-            Assert.AreEqual(expectedChildCount, htmlNode.Children.Count);
-            Assert.AreEqual(expectedIsSelfClosing, htmlNode.IsSelfClosing);
-            return htmlNode;
+            Assert.IsFalse(node.IsTextOnlyNode);
+            Assert.IsNotNull(node);
+            Assert.AreEqual(expectedTagName, node.TagName);
+            Assert.AreEqual(expectedAttributeCount, node.Attributes.Count);
+            Assert.AreEqual(expectedChildCount, node.Children.Count);
+            Assert.AreEqual(expectedIsSelfClosing, node.IsSelfClosing);
+            return node;
         }
 
-        private void VerifyTextContent(INode node, string expectedText)
+        private void VerifyTextContent(HtmlNode node, string expectedText)
         {
-            Assert.IsInstanceOfType(node, typeof(TextContent));
-            var text = (TextContent)node;
-            Assert.IsNotNull(text);
-            Assert.AreEqual(expectedText, text.Text);
+            Assert.IsTrue(node.IsTextOnlyNode);
+            Assert.IsNotNull(node);
+            Assert.AreEqual(expectedText, node.Text);
         }
     }
 }

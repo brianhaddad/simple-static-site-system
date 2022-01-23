@@ -12,12 +12,14 @@ namespace SSHPW
 
         public static string[] StringifyToLines(this ParsedHtmlNodeTree htmlDoc, HtmlStringificationOptions options)
         {
-            throw new NotImplementedException();
+            var stringifier = new HtmlNodeStringifier(options);
+            return stringifier.Stringify(htmlDoc);
         }
 
         public static string[] StringifyToLines(this HtmlNode htmlNode, HtmlStringificationOptions options)
         {
-            throw new NotImplementedException();
+            var stringifier = new HtmlNodeStringifier(options);
+            return stringifier.Stringify(htmlNode);
         }
     }
 }
