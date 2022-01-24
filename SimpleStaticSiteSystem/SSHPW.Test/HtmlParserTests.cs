@@ -19,6 +19,7 @@ namespace SSHPW.Test
                 "    <body>",
                 "        <p class=\"test\">This is some <em>weird</em> text.</p>",
                 "        <hr />",
+                "        <div></div>",
                 "    </body>",
                 "</html>",
             };
@@ -100,10 +101,10 @@ namespace SSHPW.Test
             var title = VerifyHtmlNode(head.Children.First(), "title", 0, 1, false);
             VerifyTextContent(title.Children.First(), "My Test Page");
 
-            var body = VerifyHtmlNode(html.Children.Last(), "body", 0, 2, false);
+            var body = VerifyHtmlNode(html.Children.Last(), "body", 0, 3, false);
 
             Assert.IsInstanceOfType(body.Children.First(), typeof(HtmlNode));
-            var p = VerifyHtmlNode(body.Children.First(), "p", 0, 3, false);
+            var p = VerifyHtmlNode(body.Children.First(), "p", 1, 3, false);
             Assert.IsNotNull(p.Attributes);
             Assert.IsTrue(p.Attributes.Count == 1);
             Assert.AreEqual("class", p.Attributes.First().Name);
@@ -113,7 +114,8 @@ namespace SSHPW.Test
             VerifyTextContent(em.Children.First(), "weird");
             VerifyTextContent(p.Children.Last(), " text.");
 
-            VerifyHtmlNode(body.Children.Last(), "hr", 0, 0, true);
+            VerifyHtmlNode(body.Children.ElementAt(body.Children.Count - 2), "hr", 0, 0, true);
+            VerifyHtmlNode(body.Children.Last(), "div", 0, 0, false);
         }
 
         private HtmlNode VerifyHtmlNode(HtmlNode node, string expectedTagName, int expectedAttributeCount, int expectedChildCount, bool expectedIsSelfClosing)
@@ -121,9 +123,13 @@ namespace SSHPW.Test
             Assert.IsNotNull(node);
             Assert.IsFalse(node.IsTextOnlyNode);
             Assert.AreEqual(expectedTagName, node.TagName);
-            Assert.AreEqual(expectedAttributeCount, node.Attributes.Count);
-            Assert.AreEqual(expectedChildCount, node.Children.Count);
+            Assert.AreEqual(expectedAttributeCount, node.Attributes?.Count ?? 0);
+            Assert.AreEqual(expectedChildCount, node.Children?.Count ?? 0);
             Assert.AreEqual(expectedIsSelfClosing, node.IsSelfClosing);
+            if (!expectedIsSelfClosing && expectedChildCount == 0)
+            {
+                Assert.IsTrue(node.ForceSeparateCloseTagForEmptyNode);
+            }
             return node;
         }
 
