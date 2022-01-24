@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SSHPW.Classes;
 using SSHPW.Classes.Enums;
+using SSHPW.Extensions;
+using SSHPW.Tools;
 using System;
 using System.Collections.Generic;
 
@@ -28,9 +30,9 @@ namespace SSHPW.Test
             "    </BODY>",
             "</HTML>",
         };
-        private ParsedHtmlNodeTree GetSuperSimpleTestData()
+        private HtmlDocument GetSuperSimpleTestData()
         {
-            var result = new ParsedHtmlNodeTree
+            var result = new HtmlDocument
             {
                 ContainsDocTypeDeclaration = true,
                 DocTypeValues = new List<string> { "html" },

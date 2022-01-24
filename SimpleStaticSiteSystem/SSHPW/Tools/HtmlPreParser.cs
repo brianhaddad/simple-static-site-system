@@ -1,8 +1,9 @@
 ﻿using SSHPW.Classes;
 using SSHPW.Classes.Enums;
 using SSHPW.Exceptions;
+using SSHPW.Extensions;
 
-namespace SSHPW
+namespace SSHPW.Tools
 {
     public class HtmlPreParser
     {
@@ -78,7 +79,7 @@ namespace SSHPW
                     }
                     result.Data.Add(nodeData);
                     
-                    if (!nodeData.IsClosingTag && SPECIAL_CASES.Any(x => nodeData.TagName.Contains(x)))
+                    if (!nodeData.IsClosingTag && SPECIAL_CASES.Any(x => nodeData.TagName.Contains(x, StringComparison.CurrentCultureIgnoreCase)))
                     {
                         //TODO: all whitespace formatting within the special case has been obliterated by the sanitizer.
                         //Can we recover the original data? Maybe during the final step making use of the find ignoring whitespace?
@@ -92,7 +93,7 @@ namespace SSHPW
                             var specialText = new NodeParsingData
                             {
                                 ParsedDataType = ParsingDataType.Text,
-                                Text = contents,
+                                Text = CleanUpSpecialTextContent(contents),
                             };
                             result.Data.Add(specialText);
                             Eat(contents);
@@ -137,5 +138,19 @@ namespace SSHPW
         private string[] SplitAttributes(string text) => text.Replace(NEWLINE, SPACE).Split(SPACE);
         private string Nibble(string text, string search)
             => text.BeginsWith(search) ? text.Substring(search.Length) : "";
+
+        private string CleanUpSpecialTextContent(string text)
+        {
+            var result = text.Trim();
+            if (result.BeginsWith(NEWLINE))
+            {
+                result = result.Substring(NEWLINE.Length);
+            }
+            if (result.EndsWith(NEWLINE))
+            {
+                result = result.Substring(0, result.Length - NEWLINE.Length);
+            }
+            return result.ReplaceAll(NEWLINE + " ", NEWLINE).Trim();
+        }
     }
 }

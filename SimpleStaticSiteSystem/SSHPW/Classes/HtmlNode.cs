@@ -1,4 +1,6 @@
-﻿namespace SSHPW.Classes
+﻿using SSHPW.Extensions;
+
+namespace SSHPW.Classes
 {
     public class HtmlNode
     {

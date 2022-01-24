@@ -2,7 +2,7 @@
 using SSHPW.Classes.Enums;
 using SSHPW.Exceptions;
 
-namespace SSHPW
+namespace SSHPW.Tools
 {
     public class HtmlParser
     {
@@ -17,18 +17,18 @@ namespace SSHPW
             _preParser = preParser ?? throw new ArgumentNullException(nameof(preParser));
         }
 
-        public ParsedHtmlNodeTree Parse(string[] lines)
+        public HtmlDocument Parse(string[] lines)
             => ParseSanitized(_sanitizer.Sanitize(lines));
 
-        public ParsedHtmlNodeTree Parse(string text)
+        public HtmlDocument Parse(string text)
             => ParseSanitized(_sanitizer.Sanitize(text));
 
-        private ParsedHtmlNodeTree ParseSanitized(string text)
+        private HtmlDocument ParseSanitized(string text)
         {
             Data.Clear();
             _index = -1;
             var preparse = _preParser.GetParsingData(text);
-            var result = new ParsedHtmlNodeTree
+            var result = new HtmlDocument
             {
                 ContainsDocTypeDeclaration = preparse.ContainsDocTypeDeclaration,
                 DocTypeValues = preparse.DocTypeValues,

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using SSHPW.Tools;
 
 namespace SSHPW.Test
 {

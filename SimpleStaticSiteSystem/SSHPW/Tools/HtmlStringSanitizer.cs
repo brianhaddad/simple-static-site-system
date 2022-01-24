@@ -1,4 +1,6 @@
-﻿namespace SSHPW
+﻿using SSHPW.Extensions;
+
+namespace SSHPW.Tools
 {
     public class HtmlStringSanitizer
     {

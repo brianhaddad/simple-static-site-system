@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SSHPW.Tools;
 
 namespace SSHPW.Test
 {
@@ -39,6 +40,44 @@ namespace SSHPW.Test
             Assert.AreEqual(1, result.DocTypeValues.Count);
             Assert.IsNotNull(result.Data);
             Assert.AreEqual(15, result.Data.Count); //This might need adjusting as I learn how to handle newlines and stuff
+        }
+
+        [TestMethod]
+        public void GetParsingData_multiline_handles_script_tag_with_html_data_inside()
+        {
+            // Arrange
+            var preParser = new HtmlPreParser();
+            var htmlLines = new[]
+                {
+                    "<!DOCTYPE html>",
+                    "<HTML>",
+                    "    <HEAD>",
+                    "        <TITLE>Test Page</TITLE>",
+                    "    </HEAD>",
+                    "    <BODY>",
+                    "        <P class=\"paragraph\">Hello <EM>world</EM>!</P>",
+                    "        <HR />",
+                    "        <P>Hello<BR />world!</P>",
+                    "        <DIV width=32></DIV>",
+                    "        <SCRIPT>",
+                    "            var test = \"<testing>\";",
+                    "            alert(test);",
+                    "        </SCRIPT>",
+                    "    </BODY>",
+                    "</HTML>",
+                };
+            var sanitizer = new HtmlStringSanitizer();
+            var testHtml = sanitizer.Sanitize(htmlLines);
+
+            // Act
+            var result = preParser.GetParsingData(testHtml);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.ContainsDocTypeDeclaration);
+            Assert.AreEqual(1, result.DocTypeValues.Count);
+            Assert.IsNotNull(result.Data);
+            Assert.AreEqual(27, result.Data.Count); //This might need adjusting as I learn how to handle newlines and stuff
         }
     }
 }

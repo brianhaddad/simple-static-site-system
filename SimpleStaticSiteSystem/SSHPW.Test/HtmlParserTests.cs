@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SSHPW.Classes;
 using SSHPW.Exceptions;
+using SSHPW.Tools;
 using System.Linq;
 
 namespace SSHPW.Test
@@ -20,6 +21,10 @@ namespace SSHPW.Test
                 "        <p class=\"test\">This is some <em>weird</em> text.</p>",
                 "        <hr />",
                 "        <div></div>",
+                "        <script>",
+                "            var test = \"<testing>\";",
+                "            alert(test);",
+                "        </script>",
                 "    </body>",
                 "</html>",
             };
@@ -91,7 +96,7 @@ namespace SSHPW.Test
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result, typeof(ParsedHtmlNodeTree));
+            Assert.IsInstanceOfType(result, typeof(HtmlDocument));
             Assert.IsTrue(result.ContainsDocTypeDeclaration);
             Assert.AreEqual(1, result.DocTypeValues.Count);
             Assert.AreEqual("html", result.DocTypeValues.First());
@@ -101,7 +106,7 @@ namespace SSHPW.Test
             var title = VerifyHtmlNode(head.Children.First(), "title", 0, 1, false);
             VerifyTextContent(title.Children.First(), "My Test Page");
 
-            var body = VerifyHtmlNode(html.Children.Last(), "body", 0, 3, false);
+            var body = VerifyHtmlNode(html.Children.Last(), "body", 0, 4, false);
 
             Assert.IsInstanceOfType(body.Children.First(), typeof(HtmlNode));
             var p = VerifyHtmlNode(body.Children.First(), "p", 1, 3, false);
@@ -114,8 +119,9 @@ namespace SSHPW.Test
             VerifyTextContent(em.Children.First(), "weird");
             VerifyTextContent(p.Children.Last(), " text.");
 
-            VerifyHtmlNode(body.Children.ElementAt(body.Children.Count - 2), "hr", 0, 0, true);
-            VerifyHtmlNode(body.Children.Last(), "div", 0, 0, false);
+            VerifyHtmlNode(body.Children.ElementAt(1), "hr", 0, 0, true);
+            VerifyHtmlNode(body.Children.ElementAt(2), "div", 0, 0, false);
+            VerifyHtmlNode(body.Children.Last(), "script", 0, 1, false);
         }
 
         private HtmlNode VerifyHtmlNode(HtmlNode node, string expectedTagName, int expectedAttributeCount, int expectedChildCount, bool expectedIsSelfClosing)

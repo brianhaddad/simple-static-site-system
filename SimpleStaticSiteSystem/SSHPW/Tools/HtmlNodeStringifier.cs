@@ -1,7 +1,8 @@
 ﻿using SSHPW.Classes;
 using SSHPW.Classes.Enums;
+using SSHPW.Extensions;
 
-namespace SSHPW
+namespace SSHPW.Tools
 {
     public class HtmlNodeStringifier
     {
@@ -13,7 +14,7 @@ namespace SSHPW
             Options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
-        public string[] Stringify(ParsedHtmlNodeTree htmlDoc)
+        public string[] Stringify(HtmlDocument htmlDoc)
         {
             AddDoctypeDeclaration(htmlDoc);
             return Stringify(htmlDoc.RootNode);
@@ -118,7 +119,7 @@ namespace SSHPW
 
         private string CloseTag(HtmlNode node) => $"</{Casify(node.TagName)}>";
 
-        private void AddDoctypeDeclaration(ParsedHtmlNodeTree htmlDoc)
+        private void AddDoctypeDeclaration(HtmlDocument htmlDoc)
         {
             if (htmlDoc.ContainsDocTypeDeclaration && htmlDoc.DocTypeValues != null && htmlDoc.DocTypeValues.Count > 0)
             {

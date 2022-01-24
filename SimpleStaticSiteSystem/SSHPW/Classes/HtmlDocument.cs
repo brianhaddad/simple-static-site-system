@@ -1,6 +1,6 @@
 ﻿namespace SSHPW.Classes
 {
-    public class ParsedHtmlNodeTree
+    public class HtmlDocument
     {
         public bool ContainsDocTypeDeclaration { get; set; }
         public List<string> DocTypeValues { get; set; }
