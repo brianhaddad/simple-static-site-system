@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSSS", "SSSS\SSSS.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSHPW", "SSHPW\SSHPW.csproj", "{61B99D3C-2C20-4B5E-875D-E278F0B98EF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSHPW.Test", "SSHPW.Test\SSHPW.Test.csproj", "{B040A677-52CA-4C3D-A165-727974282637}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSHPW.Test", "SSHPW.Test\SSHPW.Test.csproj", "{B040A677-52CA-4C3D-A165-727974282637}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSHFH", "SSHFH\SSHFH.csproj", "{D183206A-52BB-4FE4-8486-3AC2F29E5169}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{B040A677-52CA-4C3D-A165-727974282637}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B040A677-52CA-4C3D-A165-727974282637}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B040A677-52CA-4C3D-A165-727974282637}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D183206A-52BB-4FE4-8486-3AC2F29E5169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D183206A-52BB-4FE4-8486-3AC2F29E5169}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D183206A-52BB-4FE4-8486-3AC2F29E5169}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D183206A-52BB-4FE4-8486-3AC2F29E5169}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
