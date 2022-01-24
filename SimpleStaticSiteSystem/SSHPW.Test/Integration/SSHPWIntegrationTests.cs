@@ -25,7 +25,7 @@ namespace SSHPW.Test.Integration
         public void Parse_stringify_party_can_survive_multiple_executions()
         {
             // Arrange
-            var numIterations = 10;
+            var numIterations = 100;
             var startingDocument = new string[]
                 {
                     "<!DOCTYPE html>",
