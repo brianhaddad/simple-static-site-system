@@ -2,7 +2,7 @@
 using System;
 using SSHPW.Tools;
 
-namespace SSHPW.Test
+namespace SSHPW.Test.Tools
 {
     [TestClass]
     public class HtmlStringSanitizerTests

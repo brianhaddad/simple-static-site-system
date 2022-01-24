@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SSHPW.Tools;
 
-namespace SSHPW.Test
+namespace SSHPW.Test.Tools
 {
     [TestClass]
     public class HtmlPreParserTests

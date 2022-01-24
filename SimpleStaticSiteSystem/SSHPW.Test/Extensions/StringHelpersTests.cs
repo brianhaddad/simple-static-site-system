@@ -3,7 +3,7 @@ using SSHPW.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace SSHPW.Test
+namespace SSHPW.Test.Extensions
 {
     [TestClass]
     public class StringHelpersTests

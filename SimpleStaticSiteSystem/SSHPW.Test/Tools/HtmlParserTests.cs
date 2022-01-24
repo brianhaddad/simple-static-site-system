@@ -4,7 +4,7 @@ using SSHPW.Exceptions;
 using SSHPW.Tools;
 using System.Linq;
 
-namespace SSHPW.Test
+namespace SSHPW.Test.Tools
 {
     [TestClass]
     public class HtmlParserTests

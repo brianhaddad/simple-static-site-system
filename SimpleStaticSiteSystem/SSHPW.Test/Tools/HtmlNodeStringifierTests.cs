@@ -6,7 +6,7 @@ using SSHPW.Tools;
 using System;
 using System.Collections.Generic;
 
-namespace SSHPW.Test
+namespace SSHPW.Test.Tools
 {
     [TestClass]
     public class HtmlNodeStringifierTests
