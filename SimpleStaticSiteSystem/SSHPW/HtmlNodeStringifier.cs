@@ -30,22 +30,42 @@ namespace SSHPW
 
         private void Process(HtmlNode node, int indentLevel)
         {
+            var indent = Indent(indentLevel);
             if (ContainsImmediateChildTextNode(node))
             {
-                Lines.Add(Indent(indentLevel) + ProcessInlineNodes(node));
+                if (node.Children.Count == 1 && node.Children.First().IsMultilineTextOnlyNode)
+                {
+                    Lines.Add(indent + OpenTag(node));
+                    var childLines = node.Children.First().Text.SplitByNewline();
+                    var childIndent = Indent(indentLevel + 1);
+                    foreach (var line in childLines)
+                    {
+                        //TODO: this might have an indent creep problem...
+                        Lines.Add(childIndent + line);
+                    }
+                    Lines.Add(indent + CloseTag(node));
+                }
+                else
+                {
+                    Lines.Add(indent + ProcessInlineNodes(node));
+                }
             }
             else if (node.IsSelfClosing)
             {
-                Lines.Add(Indent(indentLevel) + SelfClosedTag(node));
+                Lines.Add(indent + SelfClosedTag(node));
+            }
+            else if (node.ForceSeparateCloseTagForEmptyNode)
+            {
+                Lines.Add(indent + ProcessInlineNodes(node));
             }
             else
             {
-                Lines.Add(Indent(indentLevel) + OpenTag(node));
+                Lines.Add(indent + OpenTag(node));
                 foreach (var child in node.Children)
                 {
                     Process(child, indentLevel + 1);
                 }
-                Lines.Add(Indent(indentLevel) + CloseTag(node));
+                Lines.Add(indent + CloseTag(node));
             }
         }
 
@@ -54,6 +74,10 @@ namespace SSHPW
             if (node.IsSelfClosing)
             {
                 return SelfClosedTag(node);
+            }
+            if (node.ForceSeparateCloseTagForEmptyNode)
+            {
+                return OpenTag(node) + CloseTag(node);
             }
             if (node.IsTextOnlyNode)
             {

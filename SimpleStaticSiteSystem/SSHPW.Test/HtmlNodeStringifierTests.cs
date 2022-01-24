@@ -20,6 +20,11 @@ namespace SSHPW.Test
             "        <P class=\"paragraph\">Hello <EM>world</EM>!</P>",
             "        <HR />",
             "        <P>Hello<BR />world!</P>",
+            "        <DIV width=32></DIV>",
+            "        <SCRIPT>",
+            "            var test = \"<testing>\";",
+            "            alert(test);",
+            "        </SCRIPT>",
             "    </BODY>",
             "</HTML>",
         };
@@ -96,6 +101,29 @@ namespace SSHPW.Test
                                             TagName = "br",
                                         },
                                         new HtmlNode("world!"),
+                                    },
+                                },
+                                new HtmlNode
+                                {
+                                    TagName = "div",
+                                    Attributes = new List<HtmlNodeAttribute>
+                                    {
+                                        new HtmlNodeAttribute
+                                        {
+                                            Name = "width",
+                                            Value = "32",
+                                            IsImplicitTrue = false,
+                                            QuotesAroundValue = false,
+                                        },
+                                    },
+                                    ForceSeparateCloseTagForEmptyNode = true,
+                                },
+                                new HtmlNode
+                                {
+                                    TagName = "script",
+                                    Children = new List<HtmlNode>
+                                    {
+                                        new HtmlNode("var test = \"<testing>\";\nalert(test);"),
                                     },
                                 },
                             },

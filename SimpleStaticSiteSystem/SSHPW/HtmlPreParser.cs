@@ -13,6 +13,12 @@ namespace SSHPW
         private const string EQUALS = "=";
         private const string TAG_CLOSER = "/";
         private readonly string NEWLINE = Environment.NewLine;
+        private readonly string[] SPECIAL_CASES = new[]
+        {
+            "script",
+            "pre",
+            "textarea",
+        };
 
         private string SanitizedText;
         private string Text;
@@ -51,35 +57,62 @@ namespace SSHPW
             foreach (var part in parts)
             {
                 Eat(OPEN);
-                var tagText = TextUpToNext(CLOSE);
-                var nodeData = new NodeParsingData
+                if (CanEat(part))
                 {
-                    ParsedDataType = ParsingDataType.Tag,
-                    ContainsCloser = tagText.Contains(TAG_CLOSER),
-                    IsClosingTag = tagText.BeginsWith(TAG_CLOSER),
-                };
-                if (tagText.Length == 0)
-                {
-                    throw new HtmlParsingErrorException($"Expected to find a closing tag after position {CurrentParsingPosition}.");
-                }
-                var tagParts = tagText.Split(SPACE);
-                nodeData.TagName = tagParts[0].ReplaceAll(TAG_CLOSER, "");
-                if (tagParts.Length > 1)
-                {
-                    nodeData.Attributes = tagParts.Skip(1).Where(x => !x.Contains(TAG_CLOSER)).Select(x => x.Split(EQUALS));
-                }
-                result.Data.Add(nodeData);
-                var remainder = Nibble(part, tagText + CLOSE).ReplaceAll(NEWLINE + SPACE, NEWLINE);
-                if (remainder.Length > 0 && remainder != NEWLINE)
-                {
-                    var textNodeData = new NodeParsingData
+                    var tagText = TextUpToNext(CLOSE);
+                    var nodeData = new NodeParsingData
                     {
-                        ParsedDataType = ParsingDataType.Text,
-                        Text = remainder,
+                        ParsedDataType = ParsingDataType.Tag,
+                        IsSelfClosing = tagText.EndsWith(TAG_CLOSER, true),
+                        IsClosingTag = tagText.BeginsWith(TAG_CLOSER),
                     };
-                    result.Data.Add(textNodeData);
+                    if (tagText.Length == 0)
+                    {
+                        throw new HtmlParsingErrorException($"Expected to find a closing tag after position {CurrentParsingPosition}.");
+                    }
+                    var tagParts = tagText.Split(SPACE);
+                    nodeData.TagName = tagParts[0].ReplaceAll(TAG_CLOSER, "");
+                    if (tagParts.Length > 1)
+                    {
+                        nodeData.Attributes = tagParts.Skip(1).Where(x => x != TAG_CLOSER).Select(x => x.Split(EQUALS));
+                    }
+                    result.Data.Add(nodeData);
+                    
+                    if (!nodeData.IsClosingTag && SPECIAL_CASES.Any(x => nodeData.TagName.Contains(x)))
+                    {
+                        //TODO: all whitespace formatting within the special case has been obliterated by the sanitizer.
+                        //Can we recover the original data? Maybe during the final step making use of the find ignoring whitespace?
+                        //Would it even be possible to account for the parent tag indentation and just preserve the intended internal indentations?
+                        var appetizer = TextUpToNext(CLOSE);
+                        Eat(appetizer + CLOSE);
+                        var closingTag = OPEN + TAG_CLOSER + nodeData.TagName + CLOSE;
+                        var contents = TextUpToNext(closingTag);
+                        if (contents.Length > 0)
+                        {
+                            var specialText = new NodeParsingData
+                            {
+                                ParsedDataType = ParsingDataType.Text,
+                                Text = contents,
+                            };
+                            result.Data.Add(specialText);
+                            Eat(contents);
+                        }
+                    }
+                    else
+                    {
+                        var remainder = Nibble(part, tagText + CLOSE).ReplaceAll(NEWLINE + SPACE, NEWLINE);
+                        if (remainder.Length > 0 && remainder != NEWLINE)
+                        {
+                            var textNodeData = new NodeParsingData
+                            {
+                                ParsedDataType = ParsingDataType.Text,
+                                Text = remainder,
+                            };
+                            result.Data.Add(textNodeData);
+                        }
+                        Eat(part);
+                    }
                 }
-                Eat(part);
             }
             if (Text.Length > 0)
             {
