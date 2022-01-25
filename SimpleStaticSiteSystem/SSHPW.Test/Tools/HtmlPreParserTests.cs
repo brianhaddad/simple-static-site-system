@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SSHPW.Classes.Enums;
 using SSHPW.Tools;
+using System.Linq;
 
 namespace SSHPW.Test.Tools
 {
@@ -78,6 +80,78 @@ namespace SSHPW.Test.Tools
             Assert.AreEqual(1, result.DocTypeValues.Count);
             Assert.IsNotNull(result.Data);
             Assert.AreEqual(27, result.Data.Count); //This might need adjusting as I learn how to handle newlines and stuff
+        }
+
+        [TestMethod]
+        public void GetParsingData_multiline_handles_attributes_with_html_symbols_inside()
+        {
+            // Arrange
+            var preParser = new HtmlPreParser();
+            var htmlLines = new[]
+                {
+                    "<!DOCTYPE html>",
+                    "<HTML>",
+                    "    <HEAD>",
+                    "        <TITLE>Test Page</TITLE>",
+                    "    </HEAD>",
+                    "    <BODY>",
+                    "        <P class=\"paragraph\">Hello <EM>world</EM>!</P>",
+                    "        <HR />",
+                    "        <P>Hello<BR />world!</P>",
+                    "        <DIV width=32></DIV>",
+                    "        <INPUT type=\"button\" value=\"<\" />",
+                    "        <INPUT type=\"button\" value=\">\" />",
+                    "    </BODY>",
+                    "</HTML>",
+                };
+            var sanitizer = new HtmlStringSanitizer();
+            var testHtml = sanitizer.Sanitize(htmlLines);
+
+            // Act
+            var result = preParser.GetParsingData(testHtml);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.ContainsDocTypeDeclaration);
+            Assert.AreEqual(1, result.DocTypeValues.Count);
+            Assert.IsNotNull(result.Data);
+            Assert.AreEqual(26, result.Data.Count); //This might need adjusting as I learn how to handle newlines and stuff
+        }
+
+        [TestMethod]
+        public void GetParsingData_multiline_handles_html_comments()
+        {
+            // Arrange
+            var preParser = new HtmlPreParser();
+            var htmlLines = new[]
+                {
+                    "<!DOCTYPE html>",
+                    "<HTML>",
+                    "    <HEAD>",
+                    "        <TITLE>Test Page</TITLE>",
+                    "    </HEAD>",
+                    "    <BODY>",
+                    "        <P class=\"paragraph\">Hello <EM>world</EM>!</P>",
+                    "        <HR />",
+                    "        <P>Hello<BR />world!</P>",
+                    "        <DIV width=32></DIV>",
+                    "        <!-- this is a comment -->",
+                    "    </BODY>",
+                    "</HTML>",
+                };
+            var sanitizer = new HtmlStringSanitizer();
+            var testHtml = sanitizer.Sanitize(htmlLines);
+
+            // Act
+            var result = preParser.GetParsingData(testHtml);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.ContainsDocTypeDeclaration);
+            Assert.AreEqual(1, result.DocTypeValues.Count);
+            Assert.IsNotNull(result.Data);
+            Assert.AreEqual(1, result.Data.Count(x => x.ParsedDataType == ParsingDataType.Comment));
+            Assert.AreEqual(25, result.Data.Count); //This might need adjusting as I learn how to handle newlines and stuff
         }
     }
 }

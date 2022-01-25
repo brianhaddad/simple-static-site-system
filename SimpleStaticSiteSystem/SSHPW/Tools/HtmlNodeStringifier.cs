@@ -41,7 +41,6 @@ namespace SSHPW.Tools
                     var childIndent = Indent(indentLevel + 1);
                     foreach (var line in childLines)
                     {
-                        //TODO: this might have an indent creep problem...
                         Lines.Add(childIndent + line);
                     }
                     Lines.Add(indent + CloseTag(node));
@@ -50,6 +49,10 @@ namespace SSHPW.Tools
                 {
                     Lines.Add(indent + ProcessInlineNodes(node));
                 }
+            }
+            else if (node.IsCommentNode)
+            {
+                Lines.Add(indent + CommentTag(node));
             }
             else if (node.IsSelfClosing)
             {
@@ -72,6 +75,10 @@ namespace SSHPW.Tools
 
         private string ProcessInlineNodes(HtmlNode node)
         {
+            if (node.IsCommentNode)
+            {
+                return CommentTag(node);
+            }
             if (node.IsSelfClosing)
             {
                 return SelfClosedTag(node);
@@ -90,6 +97,8 @@ namespace SSHPW.Tools
 
         private string SelfClosedTag(HtmlNode node)
             => $"<{Casify(node.TagName)}{AttributesString(node.Attributes)} />";
+
+        private string CommentTag(HtmlNode node) => $"<!-- {node.Text} -->";
 
         private string OpenTag(HtmlNode node)
             => $"<{Casify(node.TagName)}{AttributesString(node.Attributes)}>";

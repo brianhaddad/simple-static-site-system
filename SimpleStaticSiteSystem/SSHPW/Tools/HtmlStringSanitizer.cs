@@ -2,6 +2,9 @@
 
 namespace SSHPW.Tools
 {
+    // NOTE:
+    // This whole concept will be defunct once the new parser is written.
+    //TODO: delete this whole shebang.
     public class HtmlStringSanitizer
     {
         public string Sanitize(string[] lines) => Sanitize(lines.Join(Environment.NewLine));

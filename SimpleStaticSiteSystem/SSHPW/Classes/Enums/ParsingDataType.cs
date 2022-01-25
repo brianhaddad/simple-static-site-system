@@ -4,5 +4,6 @@
     {
         Tag,
         Text,
+        Comment,
     }
 }

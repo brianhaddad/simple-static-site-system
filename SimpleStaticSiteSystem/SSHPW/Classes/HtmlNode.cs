@@ -8,6 +8,7 @@ namespace SSHPW.Classes
         public List<HtmlNodeAttribute> Attributes { get; set; }
         public List<HtmlNode> Children { get; set; }
         public bool IsTextOnlyNode { get; private set; } = false;
+        public bool IsCommentNode { get; private set; } = false;
         public bool IsMultilineTextOnlyNode { get; private set;} = false;
         public bool ForceSeparateCloseTagForEmptyNode { get; set; } = false;
         public string Text { get; private set; }
@@ -15,11 +16,12 @@ namespace SSHPW.Classes
 
         public HtmlNode() { }
 
-        public HtmlNode(string text)
+        public HtmlNode(string text, bool comment = false)
         {
             Text = text;
-            IsTextOnlyNode = true;
-            IsMultilineTextOnlyNode = Text.ContainsNewline();
+            IsTextOnlyNode = !comment;
+            IsCommentNode = comment;
+            IsMultilineTextOnlyNode = !comment && Text.ContainsNewline();
         }
     }
 }

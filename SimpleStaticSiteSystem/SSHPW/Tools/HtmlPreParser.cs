@@ -5,6 +5,11 @@ using SSHPW.Extensions;
 
 namespace SSHPW.Tools
 {
+    //TODO: rewrite this as a letter by letter state machine pre-processor.
+    //Features: text buffer to collect current data, states to handle special cases, attributes, values, etc...
+    //Outputs the same thing as this class does, but does not take in sanitized text.
+    //Able to maintain a concept of where in the text it is parsing so error can output exact line and character for the user.
+    //On trigger character can look ahead if necessary (like for new line or comment tag) but generally just goes one character at a time.
     public class HtmlPreParser
     {
         private const string DOCTYPE = "<!DOCTYPE";

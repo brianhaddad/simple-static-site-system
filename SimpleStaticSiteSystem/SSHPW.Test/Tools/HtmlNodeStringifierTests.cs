@@ -27,6 +27,7 @@ namespace SSHPW.Test.Tools
             "            var test = \"<testing>\";",
             "            alert(test);",
             "        </SCRIPT>",
+            "        <!-- comment -->",
             "    </BODY>",
             "</HTML>",
         };
@@ -128,6 +129,7 @@ namespace SSHPW.Test.Tools
                                         new HtmlNode("var test = \"<testing>\";\nalert(test);"),
                                     },
                                 },
+                                new HtmlNode("comment", true),
                             },
                         }
                     }
