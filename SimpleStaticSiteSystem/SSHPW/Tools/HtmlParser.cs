@@ -6,6 +6,7 @@ namespace SSHPW.Tools
 {
     public class HtmlParser
     {
+        private const string DOCTYPE = "!DOCTYPE";
         private readonly HtmlStringSanitizer _sanitizer;
         private readonly HtmlPreParser _preParser;
         private readonly List<NodeParsingData> Data = new List<NodeParsingData>();
@@ -26,15 +27,17 @@ namespace SSHPW.Tools
         private HtmlDocument ParseSanitized(string text)
         {
             Data.Clear();
-            _index = -1;
+            _index = 0;
             var preparse = _preParser.GetParsingData(text);
-            var result = new HtmlDocument
+            var result = new HtmlDocument();
+            Data.AddRange(preparse);
+            if (Data.FirstOrDefault().TagName.ToUpper() == DOCTYPE)
             {
-                ContainsDocTypeDeclaration = preparse.ContainsDocTypeDeclaration,
-                DocTypeValues = preparse.DocTypeValues,
-            };
-            Data.AddRange(preparse.Data);
-            _index++;
+                var ppd = Data.ElementAt(_index);
+                result.ContainsDocTypeDeclaration = true;
+                result.DocTypeValues = ppd.Attributes.Select(x => x[0]).ToList();
+                _index++;
+            }
             result.RootNode = Build(new HtmlNode());
             return result;
         }

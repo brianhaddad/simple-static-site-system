@@ -12,7 +12,6 @@ namespace SSHPW.Tools
     //On trigger character can look ahead if necessary (like for new line or comment tag) but generally just goes one character at a time.
     public class HtmlPreParser
     {
-        private const string DOCTYPE = "<!DOCTYPE";
         private const string SPACE = " ";
         private const string OPEN = "<";
         private const string CLOSE = ">";
@@ -30,34 +29,11 @@ namespace SSHPW.Tools
         private string Text;
         private int CurrentParsingPosition => SanitizedText.IndexOf(Text);
 
-        public PreParseData GetParsingData(string text)
+        public List<NodeParsingData> GetParsingData(string text)
         {
             SanitizedText = text;
             Text = text;
-            var result = new PreParseData
-            {
-                ContainsDocTypeDeclaration = Text.BeginsWith(DOCTYPE),
-                Data = new List<NodeParsingData>(),
-            };
-
-            if (result.ContainsDocTypeDeclaration)
-            {
-                result.DocTypeValues = new List<string>();
-                if (Eat(DOCTYPE))
-                {
-                    var grab = TextUpToNext(CLOSE);
-                    var values = SplitAttributes(grab);
-                    foreach (var value in values)
-                    {
-                        if (value.Length > 0 && value != SPACE)
-                        {
-                            result.DocTypeValues.Add(value);
-                        }
-                    }
-                    Eat(grab + CLOSE);
-                }
-                Eat(NEWLINE);
-            }
+            var result = new List<NodeParsingData>();
 
             var parts = Text.Split(OPEN).Skip(1);
             foreach (var part in parts)
@@ -82,7 +58,7 @@ namespace SSHPW.Tools
                     {
                         nodeData.Attributes = tagParts.Skip(1).Where(x => x != TAG_CLOSER).Select(x => x.Split(EQUALS));
                     }
-                    result.Data.Add(nodeData);
+                    result.Add(nodeData);
                     
                     if (!nodeData.IsClosingTag && SPECIAL_CASES.Any(x => nodeData.TagName.Contains(x, StringComparison.CurrentCultureIgnoreCase)))
                     {
@@ -100,7 +76,7 @@ namespace SSHPW.Tools
                                 ParsedDataType = ParsingDataType.Text,
                                 Text = CleanUpSpecialTextContent(contents),
                             };
-                            result.Data.Add(specialText);
+                            result.Add(specialText);
                             Eat(contents);
                         }
                     }
@@ -114,7 +90,7 @@ namespace SSHPW.Tools
                                 ParsedDataType = ParsingDataType.Text,
                                 Text = remainder,
                             };
-                            result.Data.Add(textNodeData);
+                            result.Add(textNodeData);
                         }
                         Eat(part);
                     }

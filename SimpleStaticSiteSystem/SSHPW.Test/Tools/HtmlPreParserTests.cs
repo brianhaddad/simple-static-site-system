@@ -20,10 +20,9 @@ namespace SSHPW.Test.Tools
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ContainsDocTypeDeclaration);
-            Assert.AreEqual(1, result.DocTypeValues.Count);
-            Assert.IsNotNull(result.Data);
-            Assert.AreEqual(18, result.Data.Count); //This might need adjusting as I learn how to handle newlines
+            Assert.IsTrue(result.FirstOrDefault()?.TagName == "!doctype");
+            Assert.AreEqual(1, result.FirstOrDefault().Attributes.Count());
+            Assert.AreEqual(19, result.Count); //This might need adjusting as I learn how to handle newlines
         }
 
         [TestMethod]
@@ -38,10 +37,7 @@ namespace SSHPW.Test.Tools
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ContainsDocTypeDeclaration);
-            Assert.AreEqual(1, result.DocTypeValues.Count);
-            Assert.IsNotNull(result.Data);
-            Assert.AreEqual(15, result.Data.Count); //This might need adjusting as I learn how to handle newlines and stuff
+            Assert.AreEqual(16, result.Count); //This might need adjusting as I learn how to handle newlines and stuff
         }
 
         [TestMethod]
@@ -76,10 +72,7 @@ namespace SSHPW.Test.Tools
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ContainsDocTypeDeclaration);
-            Assert.AreEqual(1, result.DocTypeValues.Count);
-            Assert.IsNotNull(result.Data);
-            Assert.AreEqual(27, result.Data.Count); //This might need adjusting as I learn how to handle newlines and stuff
+            Assert.AreEqual(28, result.Count); //This might need adjusting as I learn how to handle newlines and stuff
         }
 
         [TestMethod]
@@ -112,10 +105,7 @@ namespace SSHPW.Test.Tools
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ContainsDocTypeDeclaration);
-            Assert.AreEqual(1, result.DocTypeValues.Count);
-            Assert.IsNotNull(result.Data);
-            Assert.AreEqual(26, result.Data.Count); //This might need adjusting as I learn how to handle newlines and stuff
+            Assert.AreEqual(27, result.Count); //This might need adjusting as I learn how to handle newlines and stuff
         }
 
         [TestMethod]
@@ -147,11 +137,8 @@ namespace SSHPW.Test.Tools
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsTrue(result.ContainsDocTypeDeclaration);
-            Assert.AreEqual(1, result.DocTypeValues.Count);
-            Assert.IsNotNull(result.Data);
-            Assert.AreEqual(1, result.Data.Count(x => x.ParsedDataType == ParsingDataType.Comment));
-            Assert.AreEqual(25, result.Data.Count); //This might need adjusting as I learn how to handle newlines and stuff
+            Assert.AreEqual(1, result.Count(x => x.ParsedDataType == ParsingDataType.Comment));
+            Assert.AreEqual(26, result.Count); //This might need adjusting as I learn how to handle newlines and stuff
         }
     }
 }
