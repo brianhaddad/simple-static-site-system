@@ -71,7 +71,7 @@ namespace SSHPW.Tools
                     }
                     if (tagParts.Length > 1)
                     {
-                        nodeData.Attributes = tagParts.Skip(1).Where(x => x != TAG_CLOSER).Select(x => x.Split(EQUALS));
+                        nodeData.Attributes = tagParts.Skip(1).Where(x => x != TAG_CLOSER).Select(x => x.Split(EQUALS)).ToList();
                     }
                     result.Add(nodeData);
 
@@ -131,7 +131,6 @@ namespace SSHPW.Tools
         private string TextUpToNext(string search)
             => Text.IndexOf(search) > 0 ? Text.Substring(0, Text.IndexOf(search)) : "";
 
-        private string[] SplitAttributes(string text) => text.Replace(NEWLINE, SPACE).Split(SPACE);
         private string Nibble(string text, string search)
             => text.BeginsWith(search) ? text.Substring(search.Length) : "";
 

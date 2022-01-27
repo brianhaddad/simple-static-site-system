@@ -98,7 +98,7 @@ namespace SSHPW.Tools
         private string SelfClosedTag(HtmlNode node)
             => $"<{Casify(node.TagName)}{AttributesString(node.Attributes)} />";
 
-        private string CommentTag(HtmlNode node) => $"<!-- {node.Text} -->";
+        private string CommentTag(HtmlNode node) => $"<!--{node.Text}-->";
 
         private string OpenTag(HtmlNode node)
             => $"<{Casify(node.TagName)}{AttributesString(node.Attributes)}>";

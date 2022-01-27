@@ -22,7 +22,8 @@ namespace SSHPW.Test.Tools
             Assert.IsNotNull(result);
             Assert.IsTrue(result.FirstOrDefault()?.TagName == "!doctype");
             Assert.AreEqual(1, result.FirstOrDefault().Attributes.Count());
-            Assert.AreEqual(19, result.Count); //This might need adjusting as I learn how to handle newlines
+            Assert.AreEqual(18, result.Count);
+            Assert.AreEqual("\"test\"", result.FirstOrDefault(x => x.TagName == "p").Attributes.FirstOrDefault()[1]);
         }
 
         [TestMethod]

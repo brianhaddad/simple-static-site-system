@@ -47,7 +47,7 @@ namespace SSHPW.Extensions
                 : text.Contains(find, StringComparison.CurrentCultureIgnoreCase);
 
         public static string RemoveWhitespace(this string text)
-            => text.RegexReplace(NewlineRegexText, "").ReplaceAll(" ", "");
+            => text.RegexReplace(NewlineRegexText, "").ReplaceAll(" ", "").ReplaceAll("	", "");
 
         public static string[] SplitByNewline(this string text)
             => text.RegexReplace(NewlineRegexText, "[-breakHere-]").Split("[-breakHere-]");

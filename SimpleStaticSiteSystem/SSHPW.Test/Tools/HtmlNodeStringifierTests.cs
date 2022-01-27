@@ -129,7 +129,7 @@ namespace SSHPW.Test.Tools
                                         new HtmlNode("var test = \"<testing>\";\nalert(test);"),
                                     },
                                 },
-                                new HtmlNode("comment", true),
+                                new HtmlNode(" comment ", true),
                             },
                         }
                     }
