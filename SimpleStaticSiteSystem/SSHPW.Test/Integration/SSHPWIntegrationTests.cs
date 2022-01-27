@@ -8,7 +8,7 @@ namespace SSHPW.Test.Integration
     [TestClass]
     public class SSHPWIntegrationTests
     {
-        private SuperSimpleHtmlParserWriter _sshpw;
+        private ISuperSimpleHtmlParserWriter _sshpw;
 
         [TestInitialize]
         public void Initialize()

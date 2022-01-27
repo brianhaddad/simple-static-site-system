@@ -10,8 +10,9 @@ namespace SSHPW.Tools
     //Outputs the same thing as this class does, but does not take in sanitized text.
     //Able to maintain a concept of where in the text it is parsing so error can output exact line and character for the user.
     //On trigger character can look ahead if necessary (like for new line or comment tag) but generally just goes one character at a time.
-    public class HtmlPreParser
+    public class BasicDumbPreParser : IHtmlPreParser
     {
+        private readonly HtmlStringSanitizer _sanitizer;
         private const string SPACE = " ";
         private const string OPEN = "<";
         private const string CLOSE = ">";
@@ -29,10 +30,15 @@ namespace SSHPW.Tools
         private string Text;
         private int CurrentParsingPosition => SanitizedText.IndexOf(Text);
 
-        public List<NodeParsingData> GetParsingData(string text)
+        public BasicDumbPreParser(HtmlStringSanitizer sanitizer)
         {
-            SanitizedText = text;
-            Text = text;
+            _sanitizer = sanitizer ?? throw new ArgumentNullException(nameof(sanitizer));
+        }
+
+        public List<NodeParsingData> GetParsedSymbols(string[] lines)
+        {
+            SanitizedText = _sanitizer.Sanitize(lines);
+            Text = SanitizedText;
             var result = new List<NodeParsingData>();
 
             var parts = Text.Split(OPEN).Skip(1);
@@ -59,7 +65,7 @@ namespace SSHPW.Tools
                         nodeData.Attributes = tagParts.Skip(1).Where(x => x != TAG_CLOSER).Select(x => x.Split(EQUALS));
                     }
                     result.Add(nodeData);
-                    
+
                     if (!nodeData.IsClosingTag && SPECIAL_CASES.Any(x => nodeData.TagName.Contains(x, StringComparison.CurrentCultureIgnoreCase)))
                     {
                         //TODO: all whitespace formatting within the special case has been obliterated by the sanitizer.

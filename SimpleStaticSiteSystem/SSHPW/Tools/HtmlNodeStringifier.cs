@@ -4,9 +4,9 @@ using SSHPW.Extensions;
 
 namespace SSHPW.Tools
 {
-    public class HtmlNodeStringifier
+    public class HtmlNodeStringifier : IHtmlNodeStringifier
     {
-        private readonly List<string> Lines = new List<string>();
+        private readonly List<string> Lines = new();
         private readonly HtmlStringificationOptions Options;
 
         public HtmlNodeStringifier(HtmlStringificationOptions options)

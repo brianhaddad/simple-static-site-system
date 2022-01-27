@@ -6,17 +6,17 @@ using System.Linq;
 namespace SSHPW.Test.Tools
 {
     [TestClass]
-    public class HtmlPreParserTests
+    public class BasicDumbPreParserTests
     {
         [TestMethod]
         public void GetParsingData_green_path()
         {
             // Arrange
-            var preParser = new HtmlPreParser();
+            var preParser = new BasicDumbPreParser(new HtmlStringSanitizer());
             var testHtml = "<!doctype HTML>\r\n<html>\r\n <head>\r\n <title>My Test \r\n Page</title>\r\n </head>\r\n <body>\r\n <p class=\"test\">This is some <em>weird</em> text.</p>\r\n <hr class=\"test\" />\r\n </body> \r\n</html>";
 
             // Act
-            var result = preParser.GetParsingData(testHtml);
+            var result = preParser.GetParsedSymbols(new[] { testHtml });
 
             // Assert
             Assert.IsNotNull(result);
@@ -29,11 +29,11 @@ namespace SSHPW.Test.Tools
         public void GetParsingData_handles_script_tag_with_html_data_inside()
         {
             // Arrange
-            var preParser = new HtmlPreParser();
+            var preParser = new BasicDumbPreParser(new HtmlStringSanitizer());
             var testHtml = "<!doctype HTML>\r\n<html>\r\n <head>\r\n <title>My Test Page</title>\r\n </head>\r\n <body>\r\n <div id=\"test\"></div>\r\n <script type=\"text/javascript\">var html = \"<tag>Hi there!</tag>\";\r\nalert(html);</script>\r\n </body> \r\n</html>";
 
             // Act
-            var result = preParser.GetParsingData(testHtml);
+            var result = preParser.GetParsedSymbols(new[] { testHtml });
 
             // Assert
             Assert.IsNotNull(result);
@@ -44,7 +44,7 @@ namespace SSHPW.Test.Tools
         public void GetParsingData_multiline_handles_script_tag_with_html_data_inside()
         {
             // Arrange
-            var preParser = new HtmlPreParser();
+            var preParser = new BasicDumbPreParser(new HtmlStringSanitizer());
             var htmlLines = new[]
                 {
                     "<!DOCTYPE html>",
@@ -64,11 +64,9 @@ namespace SSHPW.Test.Tools
                     "    </BODY>",
                     "</HTML>",
                 };
-            var sanitizer = new HtmlStringSanitizer();
-            var testHtml = sanitizer.Sanitize(htmlLines);
 
             // Act
-            var result = preParser.GetParsingData(testHtml);
+            var result = preParser.GetParsedSymbols(htmlLines);
 
             // Assert
             Assert.IsNotNull(result);
@@ -79,7 +77,7 @@ namespace SSHPW.Test.Tools
         public void GetParsingData_multiline_handles_attributes_with_html_symbols_inside()
         {
             // Arrange
-            var preParser = new HtmlPreParser();
+            var preParser = new BasicDumbPreParser(new HtmlStringSanitizer());
             var htmlLines = new[]
                 {
                     "<!DOCTYPE html>",
@@ -97,11 +95,9 @@ namespace SSHPW.Test.Tools
                     "    </BODY>",
                     "</HTML>",
                 };
-            var sanitizer = new HtmlStringSanitizer();
-            var testHtml = sanitizer.Sanitize(htmlLines);
 
             // Act
-            var result = preParser.GetParsingData(testHtml);
+            var result = preParser.GetParsedSymbols(htmlLines);
 
             // Assert
             Assert.IsNotNull(result);
@@ -112,7 +108,7 @@ namespace SSHPW.Test.Tools
         public void GetParsingData_multiline_handles_html_comments()
         {
             // Arrange
-            var preParser = new HtmlPreParser();
+            var preParser = new BasicDumbPreParser(new HtmlStringSanitizer());
             var htmlLines = new[]
                 {
                     "<!DOCTYPE html>",
@@ -129,11 +125,9 @@ namespace SSHPW.Test.Tools
                     "    </BODY>",
                     "</HTML>",
                 };
-            var sanitizer = new HtmlStringSanitizer();
-            var testHtml = sanitizer.Sanitize(htmlLines);
 
             // Act
-            var result = preParser.GetParsingData(testHtml);
+            var result = preParser.GetParsedSymbols(htmlLines);
 
             // Assert
             Assert.IsNotNull(result);

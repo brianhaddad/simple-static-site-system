@@ -6,8 +6,8 @@ namespace SSHPW
 {
     public class SuperSimpleHtmlParserWriter : ISuperSimpleHtmlParserWriter
     {
-        private readonly HtmlNodeStringifier stringifier;
-        private readonly HtmlParser parser;
+        private readonly IHtmlNodeStringifier stringifier;
+        private readonly IHtmlParser parser;
         private readonly HtmlStringificationOptions stringifierOptions;
 
         public SuperSimpleHtmlParserWriter()
@@ -18,14 +18,14 @@ namespace SSHPW
                 TagCaseBehavior = TagCaseOptions.UpperCase,
             };
             stringifier = new HtmlNodeStringifier(stringifierOptions);
-            parser = new HtmlParser(new HtmlStringSanitizer(), new HtmlPreParser());
+            parser = new HtmlParser(new BasicDumbPreParser(new HtmlStringSanitizer()), new HtmlNodeTreeBuilder());
         }
 
         public SuperSimpleHtmlParserWriter(HtmlStringificationOptions options)
         {
             stringifierOptions = options;
             stringifier = new HtmlNodeStringifier(stringifierOptions);
-            parser = new HtmlParser(new HtmlStringSanitizer(), new HtmlPreParser());
+            parser = new HtmlParser(new BasicDumbPreParser(new HtmlStringSanitizer()), new HtmlNodeTreeBuilder());
         }
 
         public string[] Stringify(HtmlDocument htmlDoc) => stringifier.Stringify(htmlDoc);
