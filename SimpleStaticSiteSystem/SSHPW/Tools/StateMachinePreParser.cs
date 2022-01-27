@@ -256,14 +256,9 @@ namespace SSHPW.Tools
         private void ReadingSpecialFormattedTextContent()
         {
             //NOTE: this is perhaps the most difficult parsing job.
-            //I can try to really parse the values between the tags,
-            //or I can hope they aren't dumb enough to put their own
-            //closing tag inside of the special section. Example of
-            //an expected failure:
-            //<script>
-            //  var test = "</script>";
-            //</script>
-            //Yes, I am not going to be sad if my parser fails here.
+            //For script tags only, will track whether inside or outside
+            //the various types of javascript "quotes" and only respond
+            //to the script close tag when not in quotes.
             //TODO: actually write this thing. :)
             var currentTag = _nextNode.TagName;
             _state = ParserState.SearchingForTag;
