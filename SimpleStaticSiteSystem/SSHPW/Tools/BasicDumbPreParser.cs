@@ -18,6 +18,7 @@ namespace SSHPW.Tools
         private const string CLOSE = ">";
         private const string EQUALS = "=";
         private const string TAG_CLOSER = "/";
+        private const string COMMENT_TAG = "!--";
         private readonly string NEWLINE = Environment.NewLine;
         private readonly string[] SPECIAL_CASES = new[]
         {
@@ -36,8 +37,11 @@ namespace SSHPW.Tools
         }
 
         public List<NodeParsingData> GetParsedSymbols(string[] lines)
+            => GetParsedSymbols(lines.Join(Environment.NewLine));
+
+        public List<NodeParsingData> GetParsedSymbols(string text)
         {
-            SanitizedText = _sanitizer.Sanitize(lines);
+            SanitizedText = _sanitizer.Sanitize(text);
             Text = SanitizedText;
             var result = new List<NodeParsingData>();
 
@@ -60,6 +64,11 @@ namespace SSHPW.Tools
                     }
                     var tagParts = tagText.Split(SPACE);
                     nodeData.TagName = tagParts[0].ReplaceAll(TAG_CLOSER, "");
+                    if (nodeData.TagName == COMMENT_TAG)
+                    {
+                        nodeData.ParsedDataType = ParsingDataType.Comment;
+                        nodeData.IsSelfClosing = true;
+                    }
                     if (tagParts.Length > 1)
                     {
                         nodeData.Attributes = tagParts.Skip(1).Where(x => x != TAG_CLOSER).Select(x => x.Split(EQUALS));

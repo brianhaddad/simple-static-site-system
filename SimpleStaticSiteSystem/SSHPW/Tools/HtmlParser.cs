@@ -14,11 +14,19 @@ namespace SSHPW.Tools
         }
 
         public HtmlDocument Parse(string text)
-            => Parse(new[] { text });
+        {
+            var preparse = _preParser.GetParsedSymbols(text);
+            return Build(preparse);
+        }
 
         public HtmlDocument Parse(string[] lines)
         {
             var preparse = _preParser.GetParsedSymbols(lines);
+            return Build(preparse);
+        }
+
+        private HtmlDocument Build(List<NodeParsingData> preparse)
+        {
             _nodeTreeBuilder.SetData(preparse);
             var result = new HtmlDocument
             {
