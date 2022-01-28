@@ -172,7 +172,7 @@ namespace SSHPW.Tools
             }
             else if (NextCharacter == CLOSING_TAG_INDICATOR)
             {
-                _nextNode.IsClosingTag = true;
+                _nextNode.IsClosingTag = false;
                 _nextNode.IsSelfClosing = true;
             }
             else if (PreviousCharacterIsWhitespace

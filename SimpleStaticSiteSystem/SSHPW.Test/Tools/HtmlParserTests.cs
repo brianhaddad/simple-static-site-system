@@ -56,7 +56,7 @@ namespace SSHPW.Test.Tools
         [TestInitialize]
         public void Setup()
         {
-            _parser = new HtmlParser(new BasicDumbPreParser(new HtmlStringSanitizer()), new HtmlNodeTreeBuilder());
+            _parser = new HtmlParser(new StateMachinePreParser(), new HtmlNodeTreeBuilder());
         }
 
         [TestMethod]

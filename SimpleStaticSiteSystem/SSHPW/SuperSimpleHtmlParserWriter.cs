@@ -18,14 +18,14 @@ namespace SSHPW
                 TagCaseBehavior = TagCaseOptions.UpperCase,
             };
             stringifier = new HtmlNodeStringifier(stringifierOptions);
-            parser = new HtmlParser(new BasicDumbPreParser(new HtmlStringSanitizer()), new HtmlNodeTreeBuilder());
+            parser = new HtmlParser(new StateMachinePreParser(), new HtmlNodeTreeBuilder());
         }
 
         public SuperSimpleHtmlParserWriter(HtmlStringificationOptions options)
         {
             stringifierOptions = options;
             stringifier = new HtmlNodeStringifier(stringifierOptions);
-            parser = new HtmlParser(new BasicDumbPreParser(new HtmlStringSanitizer()), new HtmlNodeTreeBuilder());
+            parser = new HtmlParser(new StateMachinePreParser(), new HtmlNodeTreeBuilder());
         }
 
         public string[] Stringify(HtmlDocument htmlDoc) => stringifier.Stringify(htmlDoc);

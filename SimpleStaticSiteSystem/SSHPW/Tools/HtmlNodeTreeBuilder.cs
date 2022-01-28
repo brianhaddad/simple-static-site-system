@@ -41,7 +41,7 @@ namespace SSHPW.Tools
         private HtmlNode Build(HtmlNode node)
         {
             var ppd = Data.ElementAt(_index);
-            if (ppd is null || ppd.IsClosingTag || ppd.ParsedDataType != ParsingDataType.Tag)
+            if (ppd is null || (ppd.IsClosingTag && !ppd.IsSelfClosing) || ppd.ParsedDataType != ParsingDataType.Tag)
             {
                 throw new HtmlParsingErrorException("Unexpected error in the preparsed data or the node construction logic.");
             }
