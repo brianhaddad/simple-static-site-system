@@ -34,6 +34,12 @@ namespace SSHPW.Tools
             "PRE",
             "TEXTAREA",
         };
+        private readonly string[] SCRIPT_QUOTE_MARKS = new string[]
+        {
+            "\"",
+            "'",
+            "`",
+        };
 
         private ParserState _state = ParserState.SearchingForTag;
         private string _textBuffer = string.Empty;
@@ -41,10 +47,12 @@ namespace SSHPW.Tools
         private int _currentCharacter = 0;
         private bool _inQuotes = false;
         private string _previousCharacter = string.Empty;
-        private NodeParsingData _nextNode;
+        private string _lastQuoteMarkSeen = string.Empty;
 
+        private NodeParsingData _nextNode;
         private string[] _lines;
         private List<NodeParsingData> _result;
+
         private string NextCharacter => _currentCharacter < _lines[_currentLine].Length
             ? _lines[_currentLine].Substring(_currentCharacter, 1)
             : EOL;
@@ -143,6 +151,10 @@ namespace SSHPW.Tools
                     _nextNode.ParsedDataType = ParsingDataType.Comment;
                     _state = ParserState.ReadingHtmlCommentText;
                 }
+                else if (_nextNode.TagName == string.Empty || _nextNode.TagName.Length < 1)
+                {
+                    Error("An empty tag was encountered.");
+                }
                 else
                 {
                     _state = ParserState.SeekingEndOfTag;
@@ -172,7 +184,6 @@ namespace SSHPW.Tools
             }
             else if (NextCharacter == CLOSING_TAG_INDICATOR)
             {
-                _nextNode.IsClosingTag = false;
                 _nextNode.IsSelfClosing = true;
             }
             else if (PreviousCharacterIsWhitespace
@@ -254,27 +265,19 @@ namespace SSHPW.Tools
             _textBuffer = string.Empty;
         }
 
-        private readonly string[] SCRIPT_QUOTE_MARKS = new string[]
-        {
-            "\"",
-            "'",
-            "`",
-        };
-        private string LastQuotemarkSeen = string.Empty;
-
         private void ReadingSpecialFormattedTextContent()
         {
             var originalTagName = _nextNode.TagName;
             var seekingTag = $"</{originalTagName}>";
             var isScript = originalTagName.ToUpper() == "SCRIPT";
-            var currentlyInQuote = isScript && LastQuotemarkSeen != string.Empty;
+            var currentlyInQuote = isScript && _lastQuoteMarkSeen != string.Empty;
             if (!currentlyInQuote && _textBuffer.EndsWith(seekingTag, true))
             {
                 var lines = _textBuffer.Substring(0, _textBuffer.LastIndexOf(TAG_OPEN)).SplitByNewline();
                 if (isScript)
                 {
                     //TODO: normalize indent on smallest amount of whitespace
-
+                    //also, currently this portion appears to be producing garbage...
                 }
 
                 // Create and add text node:
@@ -299,16 +302,15 @@ namespace SSHPW.Tools
             }
             else
             {
-                //TODO: evaluate the next character
                 if (isScript)
                 {
-                    if (currentlyInQuote && !CurrentlyEscaped && NextCharacter == LastQuotemarkSeen)
+                    if (currentlyInQuote && !CurrentlyEscaped && NextCharacter == _lastQuoteMarkSeen)
                     {
-                        LastQuotemarkSeen = string.Empty;
+                        _lastQuoteMarkSeen = string.Empty;
                     }
                     else if (!currentlyInQuote && SCRIPT_QUOTE_MARKS.Contains(NextCharacter))
                     {
-                        LastQuotemarkSeen = NextCharacter;
+                        _lastQuoteMarkSeen = NextCharacter;
                     }
                 }
                 AddNextCharacterToBuffer();
