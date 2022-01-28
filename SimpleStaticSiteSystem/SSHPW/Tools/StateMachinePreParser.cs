@@ -2,7 +2,8 @@
 using SSHPW.Classes.Enums;
 using SSHPW.Exceptions;
 using SSHPW.Extensions;
-
+//TODO: throw more errors in this class.
+//Detect things that shouldn't be, and boom, error.
 namespace SSHPW.Tools
 {
     public enum ParserState
@@ -253,15 +254,66 @@ namespace SSHPW.Tools
             _textBuffer = string.Empty;
         }
 
+        private readonly string[] SCRIPT_QUOTE_MARKS = new string[]
+        {
+            "\"",
+            "'",
+            "`",
+        };
+        private string LastQuotemarkSeen = string.Empty;
+
         private void ReadingSpecialFormattedTextContent()
         {
-            //NOTE: this is perhaps the most difficult parsing job.
-            //For script tags only, will track whether inside or outside
-            //the various types of javascript "quotes" and only respond
-            //to the script close tag when not in quotes.
-            //TODO: actually write this thing. :)
-            var currentTag = _nextNode.TagName;
-            _state = ParserState.SearchingForTag;
+            var originalTagName = _nextNode.TagName;
+            var seekingTag = $"</{originalTagName}>";
+            var isScript = originalTagName.ToUpper() == "SCRIPT";
+            var currentlyInQuote = isScript && LastQuotemarkSeen != string.Empty;
+            if (!currentlyInQuote && _textBuffer.EndsWith(seekingTag, true))
+            {
+                var lines = _textBuffer.Substring(0, _textBuffer.LastIndexOf(TAG_OPEN)).SplitByNewline();
+                if (isScript)
+                {
+                    //TODO: normalize indent on smallest amount of whitespace
+
+                }
+
+                // Create and add text node:
+                _nextNode = new NodeParsingData
+                {
+                    ParsedDataType = ParsingDataType.Text,
+                    Text = lines.Join(EOL),
+                };
+                _result.Add(_nextNode);
+
+                // Create and add close tag:
+                _nextNode = new NodeParsingData
+                {
+                    ParsedDataType = ParsingDataType.Tag,
+                    TagName = originalTagName,
+                    IsClosingTag = true,
+                };
+                _result.Add(_nextNode);
+
+                _textBuffer = string.Empty;
+                _state = ParserState.SearchingForTag;
+            }
+            else
+            {
+                //TODO: evaluate the next character
+                if (isScript)
+                {
+                    if (currentlyInQuote && !CurrentlyEscaped && NextCharacter == LastQuotemarkSeen)
+                    {
+                        LastQuotemarkSeen = string.Empty;
+                    }
+                    else if (!currentlyInQuote && SCRIPT_QUOTE_MARKS.Contains(NextCharacter))
+                    {
+                        LastQuotemarkSeen = NextCharacter;
+                    }
+                }
+                AddNextCharacterToBuffer();
+                AdvanceCharacter();
+            }
         }
 
         private void ReadingHtmlCommentText()

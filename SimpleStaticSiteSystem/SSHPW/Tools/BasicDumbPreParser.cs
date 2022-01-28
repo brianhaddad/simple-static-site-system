@@ -5,11 +5,7 @@ using SSHPW.Extensions;
 
 namespace SSHPW.Tools
 {
-    //TODO: rewrite this as a letter by letter state machine pre-processor.
-    //Features: text buffer to collect current data, states to handle special cases, attributes, values, etc...
-    //Outputs the same thing as this class does, but does not take in sanitized text.
-    //Able to maintain a concept of where in the text it is parsing so error can output exact line and character for the user.
-    //On trigger character can look ahead if necessary (like for new line or comment tag) but generally just goes one character at a time.
+    //TODO: Once the state machine works better, remove this class.
     public class BasicDumbPreParser : IHtmlPreParser
     {
         private readonly HtmlStringSanitizer _sanitizer;
@@ -77,9 +73,6 @@ namespace SSHPW.Tools
 
                     if (!nodeData.IsClosingTag && SPECIAL_CASES.Any(x => nodeData.TagName.Contains(x, StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        //TODO: all whitespace formatting within the special case has been obliterated by the sanitizer.
-                        //Can we recover the original data? Maybe during the final step making use of the find ignoring whitespace?
-                        //Would it even be possible to account for the parent tag indentation and just preserve the intended internal indentations?
                         var appetizer = TextUpToNext(CLOSE);
                         Eat(appetizer + CLOSE);
                         var closingTag = OPEN + TAG_CLOSER + nodeData.TagName + CLOSE;

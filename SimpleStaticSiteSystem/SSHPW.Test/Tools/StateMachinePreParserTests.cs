@@ -38,7 +38,7 @@ namespace SSHPW.Test.Tools
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(16, result.Count); //This might need adjusting as I learn how to handle newlines and stuff
+            Assert.AreEqual(15, result.Count); //This might need adjusting as I learn how to handle newlines and stuff
         }
 
         [TestMethod]
@@ -54,12 +54,8 @@ namespace SSHPW.Test.Tools
                     "        <TITLE>Test Page</TITLE>",
                     "    </HEAD>",
                     "    <BODY>",
-                    "        <P class=\"paragraph\">Hello <EM>world</EM>!</P>",
-                    "        <HR />",
-                    "        <P>Hello<BR />world!</P>",
-                    "        <DIV width=32></DIV>",
                     "        <SCRIPT>",
-                    "            var test = \"<testing>\";",
+                    "            var test = \"</SCRIPT>\";",
                     "            alert(test);",
                     "        </SCRIPT>",
                     "    </BODY>",
@@ -71,7 +67,7 @@ namespace SSHPW.Test.Tools
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(28, result.Count); //This might need adjusting as I learn how to handle newlines and stuff
+            Assert.AreEqual(13, result.Count); //This might need adjusting as I learn how to handle newlines and stuff
         }
 
         [TestMethod]
