@@ -49,7 +49,10 @@ namespace SSHPW.Tools
         private bool _inQuotes = false;
         private string _previousCharacter = string.Empty;
         private string _lastQuoteMarkSeen = string.Empty;
-        private bool _inSciptComment = false;
+        private bool _inScriptSingleLineComment = false;
+        private bool _inScriptMultiLineComment = false;
+        private bool InScriptComment => _inScriptSingleLineComment || _inScriptMultiLineComment;
+        private bool InScriptQuotes => _lastQuoteMarkSeen != string.Empty;
 
         private NodeParsingData _nextNode;
         private string[] _lines;
@@ -272,8 +275,8 @@ namespace SSHPW.Tools
             var originalTagName = _nextNode.TagName;
             var seekingTag = $"</{originalTagName}>";
             var isScript = originalTagName.ToUpper() == "SCRIPT";
-            var ignoreTag = isScript && _lastQuoteMarkSeen != string.Empty && !_inSciptComment;
-            if (!ignoreTag && _textBuffer.EndsWith(seekingTag, true))
+            var ignoreTag = isScript && (InScriptQuotes || InScriptComment);
+            if (!ignoreTag && _textBuffer.EndsWith(seekingTag, true) && !(_textBuffer.EndsWith(EOL) || _textBuffer.EndsWith(SPACE)))
             {
                 var lines = _textBuffer.Substring(0, _textBuffer.LastIndexOf(TAG_OPEN)).SplitByNewline();
                 if (isScript)
@@ -307,45 +310,45 @@ namespace SSHPW.Tools
             {
                 if (isScript)
                 {
-                    if (!_inSciptComment
-                        && ignoreTag
+                    if (!InScriptComment
                         && !CurrentlyEscaped
                         && NextCharacter == _lastQuoteMarkSeen)
                     {
                         _lastQuoteMarkSeen = string.Empty;
                     }
-                    else if (!_inSciptComment
-                        && !ignoreTag
+                    else if (!InScriptComment
+                        && !CurrentlyEscaped
                         && SCRIPT_QUOTE_MARKS.Contains(NextCharacter))
                     {
                         _lastQuoteMarkSeen = NextCharacter;
                     }
-                    else if (!ignoreTag
-                        && !_inSciptComment
+                    else if (!InScriptQuotes
+                        && !InScriptComment
+                        && _lastQuoteMarkSeen == string.Empty
                         && _previousCharacter == FORWARD_SLASH
                         && NextCharacter == FORWARD_SLASH)
                     {
-                        _inSciptComment = true; //TODO: write tests for the comment stuff
+                        _inScriptSingleLineComment = true; //TODO: write tests for the comment stuff
                     }
-                    else if (!ignoreTag
-                        && _inSciptComment
+                    else if (!InScriptQuotes
+                        && _inScriptSingleLineComment
                         && NextCharacter == EOL)
                     {
-                        _inSciptComment = false;
+                        _inScriptSingleLineComment = false;
                     }
-                    else if (!ignoreTag
-                        && !_inSciptComment
+                    else if (!InScriptQuotes
+                        && !InScriptComment
                         && _previousCharacter == FORWARD_SLASH
                         && NextCharacter == ASTERISK)
                     {
-                        _inSciptComment = true;
+                        _inScriptMultiLineComment = true;
                     }
-                    else if (!ignoreTag
-                        && _inSciptComment
+                    else if (!InScriptQuotes
+                        && _inScriptMultiLineComment
                         && _previousCharacter == ASTERISK
                         && NextCharacter == FORWARD_SLASH)
                     {
-                        _inSciptComment = false;
+                        _inScriptMultiLineComment = false;
                     }
                 }
                 AddNextCharacterToBuffer();
