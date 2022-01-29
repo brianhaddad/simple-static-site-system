@@ -19,7 +19,8 @@ namespace SSHPW.Tools
 
     public class StateMachinePreParser : IHtmlPreParser
     {
-        private const string CLOSING_TAG_INDICATOR = "/";
+        private const string FORWARD_SLASH = "/";
+        private const string ASTERISK = "*";
         private const string ESCAPE_CHARACTER = @"\";
         private const string TAG_CLOSE = ">";
         private const string TAG_OPEN = "<";
@@ -48,6 +49,7 @@ namespace SSHPW.Tools
         private bool _inQuotes = false;
         private string _previousCharacter = string.Empty;
         private string _lastQuoteMarkSeen = string.Empty;
+        private bool _inSciptComment = false;
 
         private NodeParsingData _nextNode;
         private string[] _lines;
@@ -134,13 +136,13 @@ namespace SSHPW.Tools
 
         private void ReadingTagName()
         {
-            if (NextCharacter == CLOSING_TAG_INDICATOR && !BufferHasNonWhitespaceContent)
+            if (NextCharacter == FORWARD_SLASH && !BufferHasNonWhitespaceContent)
             {
                 _nextNode.IsClosingTag = true;
                 AdvanceCharacter();
                 _textBuffer = string.Empty;
             }
-            if (NextCharacter == CLOSING_TAG_INDICATOR
+            if (NextCharacter == FORWARD_SLASH
                 || NextCharacter == TAG_CLOSE
                 || (BufferHasNonWhitespaceContent & NextCharacterIsWhitespace)
                 || NextCharacter == ESCAPE_CHARACTER)
@@ -182,13 +184,13 @@ namespace SSHPW.Tools
                 }
                 _result.Add(_nextNode);
             }
-            else if (NextCharacter == CLOSING_TAG_INDICATOR)
+            else if (NextCharacter == FORWARD_SLASH)
             {
                 _nextNode.IsSelfClosing = true;
             }
             else if (PreviousCharacterIsWhitespace
                 && !NextCharacterIsWhitespace
-                && NextCharacter != CLOSING_TAG_INDICATOR
+                && NextCharacter != FORWARD_SLASH
                 && NextCharacter != TAG_CLOSE)
             {
                 if (_nextNode.Attributes is null)
@@ -204,7 +206,7 @@ namespace SSHPW.Tools
         private void ReadingTagAttribute()
         {
             if (BufferHasNonWhitespaceContent
-                && ((NextCharacter == TAG_CLOSE || NextCharacter == CLOSING_TAG_INDICATOR)
+                && ((NextCharacter == TAG_CLOSE || NextCharacter == FORWARD_SLASH)
                 || (PreviousCharacterIsWhitespace
                 && !NextCharacterIsWhitespace
                 && NextCharacter != ESCAPE_CHARACTER
@@ -237,7 +239,7 @@ namespace SSHPW.Tools
             }
             else if (EndOfQuotes
                 || (!_inQuotes && BufferHasNonWhitespaceContent
-                && (NextCharacterIsWhitespace || NextCharacter == TAG_CLOSE || NextCharacter == CLOSING_TAG_INDICATOR)))
+                && (NextCharacterIsWhitespace || NextCharacter == TAG_CLOSE || NextCharacter == FORWARD_SLASH)))
             {
                 if (_inQuotes)
                 {
@@ -270,14 +272,15 @@ namespace SSHPW.Tools
             var originalTagName = _nextNode.TagName;
             var seekingTag = $"</{originalTagName}>";
             var isScript = originalTagName.ToUpper() == "SCRIPT";
-            var currentlyInQuote = isScript && _lastQuoteMarkSeen != string.Empty;
-            if (!currentlyInQuote && _textBuffer.EndsWith(seekingTag, true))
+            var ignoreTag = isScript && _lastQuoteMarkSeen != string.Empty && !_inSciptComment;
+            if (!ignoreTag && _textBuffer.EndsWith(seekingTag, true))
             {
                 var lines = _textBuffer.Substring(0, _textBuffer.LastIndexOf(TAG_OPEN)).SplitByNewline();
                 if (isScript)
                 {
                     //TODO: normalize indent on smallest amount of whitespace
                     //also, currently this portion appears to be producing garbage...
+                    //weird empty lines before and after the text...
                 }
 
                 // Create and add text node:
@@ -304,13 +307,45 @@ namespace SSHPW.Tools
             {
                 if (isScript)
                 {
-                    if (currentlyInQuote && !CurrentlyEscaped && NextCharacter == _lastQuoteMarkSeen)
+                    if (!_inSciptComment
+                        && ignoreTag
+                        && !CurrentlyEscaped
+                        && NextCharacter == _lastQuoteMarkSeen)
                     {
                         _lastQuoteMarkSeen = string.Empty;
                     }
-                    else if (!currentlyInQuote && SCRIPT_QUOTE_MARKS.Contains(NextCharacter))
+                    else if (!_inSciptComment
+                        && !ignoreTag
+                        && SCRIPT_QUOTE_MARKS.Contains(NextCharacter))
                     {
                         _lastQuoteMarkSeen = NextCharacter;
+                    }
+                    else if (!ignoreTag
+                        && !_inSciptComment
+                        && _previousCharacter == FORWARD_SLASH
+                        && NextCharacter == FORWARD_SLASH)
+                    {
+                        _inSciptComment = true; //TODO: write tests for the comment stuff
+                    }
+                    else if (!ignoreTag
+                        && _inSciptComment
+                        && NextCharacter == EOL)
+                    {
+                        _inSciptComment = false;
+                    }
+                    else if (!ignoreTag
+                        && !_inSciptComment
+                        && _previousCharacter == FORWARD_SLASH
+                        && NextCharacter == ASTERISK)
+                    {
+                        _inSciptComment = true;
+                    }
+                    else if (!ignoreTag
+                        && _inSciptComment
+                        && _previousCharacter == ASTERISK
+                        && NextCharacter == FORWARD_SLASH)
+                    {
+                        _inSciptComment = false;
                     }
                 }
                 AddNextCharacterToBuffer();
