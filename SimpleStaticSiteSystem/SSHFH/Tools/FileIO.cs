@@ -6,8 +6,9 @@ namespace SSHFH.Tools
     public class FileIo : IFileIo
     {
         private readonly string CURRENT_DIRECTORY = Environment.CurrentDirectory;
-        private const bool USE_CURRENT_DIRECTORY = true;
-        private string BaseDirectory => (USE_CURRENT_DIRECTORY) ? CURRENT_DIRECTORY : ""; //TODO: user supplied directory?
+        private const bool USE_CURRENT_DIRECTORY = false;
+        private const string TEST_DIR = @"C:\r\simple-static-site-system\client-site-prototype\SiteProject";
+        private string BaseDirectory => (USE_CURRENT_DIRECTORY) ? CURRENT_DIRECTORY : TEST_DIR; //TODO: user supplied directory?
 
         private string Path(string path) => BaseDirectory + ((string.IsNullOrEmpty(path)) ? "" : "\\" + path);
 
