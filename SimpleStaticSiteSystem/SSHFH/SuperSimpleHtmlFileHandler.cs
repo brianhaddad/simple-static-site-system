@@ -21,10 +21,18 @@ namespace SSHFH
             return htmlParserWriter.Parse(fileLines);
         }
 
+        public void WriteFile(HtmlFile file) => WriteFile(file.Path, file.FileName, file.HtmlDocument);
+
         public void WriteFile(string path, string fileName, HtmlDocument document)
         {
             var fileLines = htmlParserWriter.Stringify(document);
             fileIo.WriteFileLines(path, fileName, fileLines);
         }
+
+        public T ReadObject<T>(string path, string filename)
+            => fileIo.ReadFromBinaryFile<T>(path, filename);
+
+        public void SaveObject<T>(string path, string filename, T obj)
+            => fileIo.WriteToBinaryFile(path, filename, obj);
     }
 }
