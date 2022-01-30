@@ -1,6 +1,6 @@
-﻿using SSHFH.Tools;
+﻿using SSClasses;
+using SSHFH.Tools;
 using SSHPW;
-using SSHPW.Classes;
 
 namespace SSHFH
 {

@@ -1,4 +1,5 @@
-﻿using SSHPW.Classes;
+﻿using SSClasses;
+using SSHPW.Classes;
 
 namespace SSHPW.Tools
 {

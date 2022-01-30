@@ -1,4 +1,4 @@
-﻿using SSHPW.Classes;
+﻿using SSClasses;
 
 namespace SSHFH
 {

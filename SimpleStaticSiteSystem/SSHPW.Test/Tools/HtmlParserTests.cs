@@ -1,5 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SSHPW.Classes;
+using SSClasses;
 using SSHPW.Exceptions;
 using SSHPW.Tools;
 using System.Linq;
