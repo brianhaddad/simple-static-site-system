@@ -11,11 +11,14 @@ Components
 	Content
 	Images
 	Scripts
+	Styles?
 	Snippets
+	Templates
 Site
 
 Files:
-Content files
-Snippet files
-Configuration file
+Content files		.shc
+Snippet files		.shs
+Template files		.sht
+Configuration file	.ssc
 	contains global settings and user defined variables.

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SSHFH.Tools
 {
@@ -7,6 +8,8 @@ namespace SSHFH.Tools
         private readonly string CURRENT_DIRECTORY = Environment.CurrentDirectory;
         private const bool USE_CURRENT_DIRECTORY = true;
         private string BaseDirectory => (USE_CURRENT_DIRECTORY) ? CURRENT_DIRECTORY : ""; //TODO: user supplied directory?
+
+        private string Path(string path) => BaseDirectory + ((string.IsNullOrEmpty(path)) ? "" : "\\" + path);
 
         private string FileFullPath(string path, string filename) => Path(path) + "\\" + filename;
 
@@ -21,21 +24,6 @@ namespace SSHFH.Tools
                 fileList.Add(file.Name);
             }
             return fileList.ToArray();
-        }
-
-        public string GetFileFirstLine(string path, string filename)
-        {
-            Directory.CreateDirectory(Path(path));
-            if (!FileExists(path, filename))
-            {
-                return string.Empty;
-            }
-            var line = "";
-            using (var reader = new StreamReader(FileFullPath(path, filename)))
-            {
-                line = reader.ReadLine() ?? "";
-            }
-            return line;
         }
 
         public string[] GetFileLines(string path, string filename)
@@ -61,12 +49,10 @@ namespace SSHFH.Tools
         public void WriteFileLines(string path, string filename, string[] lines)
         {
             Directory.CreateDirectory(Path(path));
-            using (var writer = new StreamWriter(FileFullPath(path, filename), false))
+            using var writer = new StreamWriter(FileFullPath(path, filename), false);
+            foreach (var line in lines)
             {
-                foreach (var line in lines)
-                {
-                    writer.WriteLine(line);
-                }
+                writer.WriteLine(line);
             }
         }
 
@@ -83,9 +69,23 @@ namespace SSHFH.Tools
             return FileExists(newFile);
         }
 
+        public void WriteToBinaryFile<T>(string path, string filename, T objectToWrite)
+        {
+            Directory.CreateDirectory(Path(path));
+            using var stream = File.Open(FileFullPath(path, filename), FileMode.Create);
+            var binaryFormatter = new BinaryFormatter();
+            binaryFormatter.Serialize(stream, objectToWrite);
+        }
+
+        public T ReadFromBinaryFile<T>(string path, string filename)
+        {
+            Directory.CreateDirectory(Path(path));
+            using var stream = File.Open(FileFullPath(path, filename), FileMode.Open);
+            var binaryFormatter = new BinaryFormatter();
+            return (T)binaryFormatter.Deserialize(stream);
+        }
+
         public bool FileExists(string path, string filename) => FileExists(FileFullPath(path, filename));
         public bool FileExists(string filePath) => File.Exists(filePath);
-
-        private string Path(string path) => BaseDirectory + ((string.IsNullOrEmpty(path)) ? "" : "\\" + path);
     }
 }

@@ -6,8 +6,4 @@
     <Nullable>annotations</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SSHPW\SSHPW.csproj" />
-  </ItemGroup>
-
 </Project>

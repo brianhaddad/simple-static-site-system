@@ -1,4 +1,5 @@
-﻿using SSHPW.Classes;
+﻿using SSClasses;
+using SSHPW.Classes;
 using SSHPW.Classes.Enums;
 using SSHPW.Extensions;
 

@@ -1,4 +1,4 @@
-﻿namespace SSHPW.Classes
+﻿namespace SSClasses
 {
     public class HtmlDocument
     {

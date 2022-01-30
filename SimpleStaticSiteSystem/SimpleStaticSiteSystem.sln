@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSHPW", "SSHPW\SSHPW.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSHPW.Test", "SSHPW.Test\SSHPW.Test.csproj", "{B040A677-52CA-4C3D-A165-727974282637}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSHFH", "SSHFH\SSHFH.csproj", "{D183206A-52BB-4FE4-8486-3AC2F29E5169}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSHFH", "SSHFH\SSHFH.csproj", "{D183206A-52BB-4FE4-8486-3AC2F29E5169}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSClasses", "SSClasses\SSClasses.csproj", "{91CAEF5B-E20D-4C68-951F-2A2F40CD1A4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{D183206A-52BB-4FE4-8486-3AC2F29E5169}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D183206A-52BB-4FE4-8486-3AC2F29E5169}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D183206A-52BB-4FE4-8486-3AC2F29E5169}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91CAEF5B-E20D-4C68-951F-2A2F40CD1A4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91CAEF5B-E20D-4C68-951F-2A2F40CD1A4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91CAEF5B-E20D-4C68-951F-2A2F40CD1A4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91CAEF5B-E20D-4C68-951F-2A2F40CD1A4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

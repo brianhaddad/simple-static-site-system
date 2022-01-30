@@ -1,6 +1,6 @@
-﻿using SSHPW.Extensions;
+﻿using System.Text.RegularExpressions;
 
-namespace SSHPW.Classes
+namespace SSClasses
 {
     public class HtmlNode
     {
@@ -21,7 +21,7 @@ namespace SSHPW.Classes
             Text = text;
             IsTextOnlyNode = !comment;
             IsCommentNode = comment;
-            IsMultilineTextOnlyNode = !comment && Text.ContainsNewline();
+            IsMultilineTextOnlyNode = !comment && Regex.IsMatch(Text, @"(\r\n|\n|\r)");
         }
     }
 }
