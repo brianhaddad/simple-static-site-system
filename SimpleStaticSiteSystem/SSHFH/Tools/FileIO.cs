@@ -5,19 +5,13 @@ namespace SSHFH.Tools
 {
     public class FileIo : IFileIo
     {
-        private readonly string CURRENT_DIRECTORY = Environment.CurrentDirectory;
-        private const bool USE_CURRENT_DIRECTORY = false;
-        private const string TEST_DIR = @"C:\r\simple-static-site-system\client-site-prototype\SiteProject";
-        private string BaseDirectory => (USE_CURRENT_DIRECTORY) ? CURRENT_DIRECTORY : TEST_DIR; //TODO: user supplied directory?
 
-        private string Path(string path) => BaseDirectory + ((string.IsNullOrEmpty(path)) ? "" : "\\" + path);
-
-        private string FileFullPath(string path, string filename) => Path(path) + "\\" + filename;
+        private string FileFullPath(string path, string filename) => path + "\\" + filename;
 
         public string[] GetFilesInDirectory(string path = "", string filetypeFilter = "*.*")
         {
-            Directory.CreateDirectory(Path(path));
-            var directory = new DirectoryInfo(Path(path));
+            Directory.CreateDirectory(path);
+            var directory = new DirectoryInfo(path);
             var files = directory.GetFiles(filetypeFilter);
             var fileList = new List<string>();
             foreach (var file in files)
@@ -29,7 +23,7 @@ namespace SSHFH.Tools
 
         public string[] GetFileLines(string path, string filename)
         {
-            Directory.CreateDirectory(Path(path));
+            Directory.CreateDirectory(path);
             if (!FileExists(path, filename))
             {
                 return Array.Empty<string>();
@@ -49,7 +43,7 @@ namespace SSHFH.Tools
 
         public void WriteFileLines(string path, string filename, string[] lines)
         {
-            Directory.CreateDirectory(Path(path));
+            Directory.CreateDirectory(path);
             using var writer = new StreamWriter(FileFullPath(path, filename), false);
             foreach (var line in lines)
             {
@@ -65,14 +59,14 @@ namespace SSHFH.Tools
             {
                 return false;
             }
-            Directory.CreateDirectory(Path(newPath));
+            Directory.CreateDirectory(newPath);
             File.Move(oldFile, newFile);
             return FileExists(newFile);
         }
 
         public void WriteToBinaryFile<T>(string path, string filename, T objectToWrite)
         {
-            Directory.CreateDirectory(Path(path));
+            Directory.CreateDirectory(path);
             using var stream = File.Open(FileFullPath(path, filename), FileMode.Create);
             var binaryFormatter = new BinaryFormatter();
             binaryFormatter.Serialize(stream, objectToWrite);
@@ -80,7 +74,7 @@ namespace SSHFH.Tools
 
         public T ReadFromBinaryFile<T>(string path, string filename)
         {
-            Directory.CreateDirectory(Path(path));
+            Directory.CreateDirectory(path);
             using var stream = File.Open(FileFullPath(path, filename), FileMode.Open);
             var binaryFormatter = new BinaryFormatter();
             return (T)binaryFormatter.Deserialize(stream);

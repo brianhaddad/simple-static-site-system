@@ -3,24 +3,38 @@ using SSClasses;
 using SSHFH;
 using SSHFH.Tools;
 using SSHPW;
-using SSTB;
+using SSSP;
 
-var fileHandler = new SuperSimpleHtmlFileHandler(new FileIo(), new SuperSimpleHtmlParserWriter());
+var siteProject = new SimpleStaticSiteProject(new SuperSimpleHtmlFileHandler(new FileIo(), new SuperSimpleHtmlParserWriter()));
 
+var testProjectName = "SiteProject";
+var envDir = Environment.CurrentDirectory;
+var projName = "simple-static-site-system";
+var testProjectPath = envDir.Substring(0, envDir.IndexOf(projName) + projName.Length) + @"\client-site-prototype\SiteProject";
+
+Console.WriteLine(testProjectPath);
 Console.WriteLine("Write test files? [Y/n]");
 
 var userEntry = Console.ReadLine();
 if (userEntry == "Y")
 {
-    var project = new StaticSiteProject
+    siteProject.CreateNew(testProjectPath, testProjectName);
+    siteProject.AddGlobalProjectValue("Site Title", "My Simple Static Site");
+    var page = new PageDefinition
     {
-        GlobalProjectValues = new Dictionary<string, string>
-        {
-            { "Site Title", "My Simple Static Site" }
-        }
+        PageTitle = "Test Page",
+        PageLayoutTemplate = "MainLayout.sht",
     };
-
-    fileHandler.SaveObject("/", "SiteProject.ssc", project);
+    siteProject.AddPage(page);
+    var result = siteProject.Save();
+    if (!result.Success)
+    {
+        Console.WriteLine(result.Message);
+    }
+    else
+    {
+        Console.WriteLine("Project created successfully.");
+    }
 }
 
 Console.WriteLine("Run on test files? [Y/n]");
@@ -28,6 +42,21 @@ Console.WriteLine("Run on test files? [Y/n]");
 userEntry = Console.ReadLine();
 if (userEntry == "Y")
 {
-    var builder = new SuperSimpleTemplateBuilder(fileHandler);
-    builder.Build("/", "SiteProject.ssc"); //TODO: rework to pass in the full project directory
+    var opened = siteProject.Open(testProjectPath, testProjectName);
+    if (!opened.Success)
+    {
+        Console.WriteLine(opened.Message);
+    }
+    else
+    {
+        var result = siteProject.Compile();
+        if (!result.Success)
+        {
+            Console.WriteLine(result.Message);
+        }
+        else
+        {
+            Console.WriteLine("Project compiled successfully.");
+        }
+    }
 }

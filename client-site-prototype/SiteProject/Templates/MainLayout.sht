@@ -1,0 +1,11 @@
+<!doctype template>
+<html>
+	<head>
+		<title><text-replacement key="Site Title" /></title>
+	</head>
+	<body>
+		<h1><text-replacement key="Site Title" /></h1>
+		<p>Welcome to the "<text-replacement key="Site Title" />" website.</p>
+                <p>I sure hope this works!</p>
+	</body>
+</html>

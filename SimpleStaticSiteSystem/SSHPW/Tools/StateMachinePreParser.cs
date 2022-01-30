@@ -75,6 +75,10 @@ namespace SSHPW.Tools
             ResetStateMachine();
             _lines = lines;
             _result = new List<NodeParsingData>();
+            if (_lines.Length < 1)
+            {
+                Error("Cannot read an empty or non-existent file.");
+            }
 
             do
             {

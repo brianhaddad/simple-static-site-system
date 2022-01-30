@@ -34,5 +34,8 @@ namespace SSHFH
 
         public void SaveObject<T>(string path, string filename, T obj)
             => fileIo.WriteToBinaryFile(path, filename, obj);
+
+        public bool FileExists(string path, string fileName)
+            => fileIo.FileExists(path, fileName);
     }
 }
