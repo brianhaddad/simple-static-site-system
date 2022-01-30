@@ -25,7 +25,7 @@ namespace SSHPW.Test.Integration
         public void Parse_stringify_party_can_survive_multiple_executions()
         {
             // Arrange
-            var numIterations = 10;
+            var numIterations = 50;
             var startingDocument = new string[]
                 {
                     "<!DOCTYPE html>",
@@ -41,6 +41,14 @@ namespace SSHPW.Test.Integration
                     "        <SCRIPT>",
                     "            var test = \"<testing>\";",
                     "            alert(test);",
+                    "            if (test === '</script>') {",
+                    "                //The </script> tag causes problems.",
+                    "                alert(`You cannot use the ${test} tag when it is </script>.`);",
+                    "                /* It doesn't have to make sense.",
+                    "                 * In fact, I can guarantee it won't make sense.",
+                    "                   </script>",
+                    "                 */",
+                    "            }",
                     "        </SCRIPT>",
                     "    </BODY>",
                     "</HTML>",

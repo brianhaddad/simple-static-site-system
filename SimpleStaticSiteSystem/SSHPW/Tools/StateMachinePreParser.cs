@@ -281,9 +281,21 @@ namespace SSHPW.Tools
                 var lines = _textBuffer.Substring(0, _textBuffer.LastIndexOf(TAG_OPEN)).SplitByNewline();
                 if (isScript)
                 {
-                    //TODO: normalize indent on smallest amount of whitespace
-                    //also, currently this portion appears to be producing garbage...
-                    //weird empty lines before and after the text...
+                    if (lines[0].Trim().Length == 0)
+                    {
+                        lines = lines.Skip(1).ToArray();
+                    }
+                    if (lines[^1].Trim().Length == 0)
+                    {
+                        lines = lines.Take(lines.Length - 1).ToArray();
+                    }
+                    var evaluateLines = lines
+                        .Where(x => (x.BeginsWith(SPACE) || x.BeginsWith(TAB)) && !x.BeginsWith(EOL));
+                    if (evaluateLines.Any())
+                    {
+                        var minIndexLines = evaluateLines.Min(x => x.Length - x.Trim().Length);
+                        lines = lines.Select(x => x.Substring(minIndexLines)).ToArray();
+                    }
                 }
 
                 // Create and add text node:
@@ -328,7 +340,7 @@ namespace SSHPW.Tools
                         && _previousCharacter == FORWARD_SLASH
                         && NextCharacter == FORWARD_SLASH)
                     {
-                        _inScriptSingleLineComment = true; //TODO: write tests for the comment stuff
+                        _inScriptSingleLineComment = true;
                     }
                     else if (!InScriptQuotes
                         && _inScriptSingleLineComment
