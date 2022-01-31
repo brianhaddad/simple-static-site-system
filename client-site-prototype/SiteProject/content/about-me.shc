@@ -1,0 +1,6 @@
+<!doctype content>
+<main>
+    <p>About me...</p>
+    <p>I am <text-replacement key="Author" />, author of <text-replacement key="Site Title" />.</p>
+    <p>I like long walks on the beach and writing code. Usually not at the same time.</p>
+</main>

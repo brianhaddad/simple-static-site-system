@@ -37,5 +37,8 @@ namespace SSHFH
 
         public bool FileExists(string path, string fileName)
             => fileIo.FileExists(path, fileName);
+
+        public bool CopyFile(string filename, string existingPath, string newPath)
+            => fileIo.CopyFile(filename, existingPath, newPath);
     }
 }

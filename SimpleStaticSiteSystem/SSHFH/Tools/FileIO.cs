@@ -5,7 +5,6 @@ namespace SSHFH.Tools
 {
     public class FileIo : IFileIo
     {
-
         private string FileFullPath(string path, string filename) => path + "\\" + filename;
 
         public string[] GetFilesInDirectory(string path = "", string filetypeFilter = "*.*")
@@ -61,6 +60,19 @@ namespace SSHFH.Tools
             }
             Directory.CreateDirectory(newPath);
             File.Move(oldFile, newFile);
+            return FileExists(newFile);
+        }
+
+        public bool CopyFile(string filename, string existingPath, string newPath)
+        {
+            var existingFile = FileFullPath(existingPath, filename);
+            var newFile = FileFullPath(newPath, filename);
+            if (!FileExists(existingFile))
+            {
+                return false;
+            }
+            Directory.CreateDirectory(newPath);
+            File.Copy(existingFile, newFile);
             return FileExists(newFile);
         }
 

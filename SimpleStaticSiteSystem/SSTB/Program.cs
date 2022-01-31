@@ -9,6 +9,7 @@ var siteProject = new SimpleStaticSiteProject(new SuperSimpleHtmlFileHandler(new
 
 var testProjectName = "SiteProject";
 var envDir = Environment.CurrentDirectory;
+//Warning: this assumes you are running the solution out of the default repo folder name and not a custom folder name.
 var projName = "simple-static-site-system";
 var testProjectPath = envDir.Substring(0, envDir.IndexOf(projName) + projName.Length) + @"\client-site-prototype\SiteProject";
 
@@ -20,12 +21,20 @@ if (userEntry == "Y")
 {
     siteProject.CreateNew(testProjectPath, testProjectName);
     siteProject.AddGlobalProjectValue("Site Title", "My Simple Static Site");
-    var page = new PageDefinition
+    siteProject.AddGlobalProjectValue("Author", "Brian Haddad");
+    var homePage = new PageDefinition
     {
+        IsIndex = true,
         PageTitle = "Test Page",
         PageLayoutTemplate = "MainLayout.sht",
     };
-    siteProject.AddPage(page);
+    siteProject.AddPage(homePage);
+    var aboutPage = new PageDefinition
+    {
+        PageTitle = "About Me",
+        PageLayoutTemplate = "MainLayout.sht",
+    };
+    siteProject.AddPage(aboutPage);
     var result = siteProject.Save();
     if (!result.Success)
     {

@@ -10,5 +10,6 @@ namespace SSHFH
         void WriteFile(string path, string fileName, HtmlDocument document);
         T ReadObject<T>(string path, string filename);
         void SaveObject<T>(string path, string filename, T obj);
+        bool CopyFile(string filename, string existingPath, string newPath);
     }
 }

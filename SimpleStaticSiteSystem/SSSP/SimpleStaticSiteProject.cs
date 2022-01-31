@@ -42,9 +42,9 @@ namespace SSSP
 
         public FileActionResult CreateNew(string path, string projectName, bool forceCreate = false)
         {
+            //TODO: also check to see if file already exists?
             if (DirtyUnsavedFile && !forceCreate)
             {
-                //TODO: if current project is unsaved, return error or get confirmation or something...
                 return FileActionResult.Failed("Dirty unsaved file.");
             }
             CurrentPath = path;
