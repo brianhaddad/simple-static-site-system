@@ -8,7 +8,8 @@ namespace SSSP.Tools
     public class SuperSimpleTemplateBuilder : ISuperSimpleTemplateBuilder
     {
         private readonly ISuperSimpleHtmlFileHandler _fileHandler;
-
+        //TODO: this file has a lot of random strings scattered throughout
+        //Some of these values will be required in another class probably...
         private const string BUILD_SUBDIR = @"\build";
         private const string PATH_SEPARATOR = @"\";
 
@@ -29,8 +30,19 @@ namespace SSSP.Tools
             currentBuildPath = path;
             var results = new List<HtmlFile>();
 
+            //TODO: poopy poo poo problem... Relative navigation links means this needs to be rebuild for each page,
+            //AND the links need to be calculated based on the context of the current page, with a level of "../"
+            //for each difference between current and other directory...
+            //Alternatively, we can use absolute links using the full site path, but then it won't run locally
+            //without two different build processes (dev and release, where release gets uploaded).
             var navFile = _fileHandler.ReadFile(TemplatePath, "Nav.sht");
-            nav = PerformBuildActions(navFile.RootNode, project, new PageDefinition());
+            var sortedPageDefinitions = project.PageDefinitions.OrderBy(x => x.NavMenuSortIndex).ToList();
+            var navProject = new StaticSiteProject
+            {
+                GlobalProjectValues = project.GlobalProjectValues,
+                PageDefinitions = sortedPageDefinitions,
+            };
+            nav = PerformBuildActions(navFile.RootNode, navProject, new PageDefinition());
             
             foreach (var page in project.PageDefinitions)
             {
@@ -41,7 +53,7 @@ namespace SSSP.Tools
                 var fullPath = currentBuildPath + BUILD_SUBDIR;
                 if (page.PageSubdirectory is not null)
                 {
-                    fullPath += PATH_SEPARATOR + page.PageSubdirectory;
+                    fullPath += PATH_SEPARATOR + PathText(page.PageSubdirectory);
                 }
                 var pageHtml = new HtmlFile
                 {
@@ -120,6 +132,13 @@ namespace SSSP.Tools
                     var date = DateTime.Now;
                     return new HtmlNode(date.Year.ToString());
                 }
+                if (node.Attributes?.Count(x => x.Name == "node-directory") == node.Attributes?.Count)
+                {
+                    var display = page.PageSubdirectory.Contains("/")
+                        ? page.PageSubdirectory.Substring(page.PageSubdirectory.LastIndexOf("/"))
+                        : page.PageSubdirectory;
+                    return new HtmlNode(display);
+                }
             }
 
             if (node.TagName?.ToUpper() == "NODE-REPLACEMENT" || node.Attributes?.Count(x => x.Name == "node-replacement") == 1)
@@ -140,7 +159,7 @@ namespace SSSP.Tools
                     var hrefPath = page.IsIndex ? "index.htm" : MakeFilename(page.PageTitle) + ".htm";
                     if (page.PageSubdirectory is not null && page.PageSubdirectory.Length > 0)
                     {
-                        hrefPath = page.PageSubdirectory + "/" + hrefPath;
+                        hrefPath = PathText(page.PageSubdirectory) + "/" + hrefPath;
                     }
                     var href = new HtmlNodeAttribute
                     {
@@ -164,20 +183,40 @@ namespace SSSP.Tools
                     //TODO: this needs to handle grouping by subdirectory and building up the node tree for the nav
                     var attribute = node.Attributes.First(x => x.Name == "node-replacement");
                     node.Attributes.Remove(attribute);
-                    var baseLinkSnip = "Nav_links.shs";
+                    var baseLinkSnip = "Nav_link.shs";
                     var menuData = node.Children.First().Attributes.ToArray();
                     var canNest = menuData.Any(x => x.Name == "nesting" && x.IsImplicitTrue);
                     node.Children.Clear();
+                    var completed = new List<PageDefinition>();
+                    var currentSubDirectory = project.PageDefinitions.ElementAt(0).PageSubdirectory ?? "";
                     foreach (var p in project.PageDefinitions)
                     {
-                        if (canNest && p.PageSubdirectory is not null && p.PageSubdirectory.Length > 0)
+                        if (!completed.Contains(p))
                         {
-                            //TODO: nest.
-                            //But... will need to make sure pages in same directory end up in same directory...
+                            var thisSubdirectory = p.PageSubdirectory ?? "";
+                            if (canNest && thisSubdirectory.Length > currentSubDirectory.Length)
+                            {
+                                var folderFile = _fileHandler.ReadFile(SnippetsPath, "Nav_folder.shs");
+                                var filtered = project.PageDefinitions
+                                    .Where(x => x.PageSubdirectory?.StartsWith(p.PageSubdirectory) ?? false)
+                                    .OrderBy(x => x.NavMenuSortIndex)
+                                    .ToList();
+                                var navProject = new StaticSiteProject
+                                {
+                                    GlobalProjectValues = project.GlobalProjectValues,
+                                    PageDefinitions = filtered,
+                                };
+                                completed.AddRange(filtered);
+                                var f = PerformBuildActions(folderFile.RootNode, navProject, p);
+                                node.Children.Add(f);
+                            }
+                            else
+                            {
+                                var childSnip = _fileHandler.ReadFile(SnippetsPath, baseLinkSnip);
+                                var c = PerformBuildActions(childSnip.RootNode, project, p);
+                                node.Children.Add(c);
+                            }
                         }
-                        var childSnip = _fileHandler.ReadFile(SnippetsPath, baseLinkSnip);
-                        var c = PerformBuildActions(childSnip.RootNode, project, p);
-                        node.Children.Add(c);
                     }
                     return node;
                 }
@@ -202,5 +241,8 @@ namespace SSSP.Tools
 
         private string MakeFilename(string title)
             => title.RegexReplace("[^a-zA-Z0-9]", "-").ToLower();
+
+        private string PathText(string text)
+            => text.RegexReplace(@"[^a-zA-Z0-9\/]", "");
     }
 }

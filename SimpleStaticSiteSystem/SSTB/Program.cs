@@ -22,19 +22,46 @@ if (userEntry == "Y")
     siteProject.CreateNew(testProjectPath, testProjectName);
     siteProject.AddGlobalProjectValue("Site Title", "My Simple Static Site");
     siteProject.AddGlobalProjectValue("Author", "Brian Haddad");
+    var sortOrder = 0;
     var homePage = new PageDefinition
     {
         IsIndex = true,
         PageTitle = "Test Page",
         PageLayoutTemplate = "MainLayout.sht",
+        NavMenuSortIndex = sortOrder,
     };
     siteProject.AddPage(homePage);
+    sortOrder++;
+
+    var directoryPageOne = new PageDefinition
+    {
+        PageSubdirectory = "Nested Test",
+        PageTitle = "Nested Page One",
+        PageLayoutTemplate = "MainLayout.sht",
+        NavMenuSortIndex = sortOrder,
+    };
+    siteProject.AddPage(directoryPageOne);
+    sortOrder++;
+
+    var directoryPageTwo = new PageDefinition
+    {
+        PageSubdirectory = "Nested Test",
+        PageTitle = "Nested Page Two",
+        PageLayoutTemplate = "MainLayout.sht",
+        NavMenuSortIndex = sortOrder,
+    };
+    siteProject.AddPage(directoryPageTwo);
+    sortOrder++;
+
     var aboutPage = new PageDefinition
     {
         PageTitle = "About Me",
         PageLayoutTemplate = "MainLayout.sht",
+        NavMenuSortIndex = sortOrder,
     };
     siteProject.AddPage(aboutPage);
+    sortOrder++;
+
     var result = siteProject.Save();
     if (!result.Success)
     {

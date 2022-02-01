@@ -8,5 +8,6 @@
         public string PageSubdirectory { get; set; }
         public string PageLayoutTemplate { get; set; }
         public List<string> PageStylesheets { get; set; }
+        public int NavMenuSortIndex { get; set; }
     }
 }
