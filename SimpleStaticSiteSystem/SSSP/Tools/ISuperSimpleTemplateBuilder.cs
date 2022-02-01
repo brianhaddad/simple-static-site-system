@@ -4,6 +4,6 @@ namespace SSSP.Tools
 {
     public interface ISuperSimpleTemplateBuilder
     {
-        void Build(StaticSiteProject project, string path);
+        void Build(StaticSiteProject project, string path, string env);
     }
 }

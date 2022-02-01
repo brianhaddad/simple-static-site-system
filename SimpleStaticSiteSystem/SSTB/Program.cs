@@ -22,6 +22,7 @@ if (userEntry == "Y")
     siteProject.CreateNew(testProjectPath, testProjectName);
     siteProject.AddGlobalProjectValue("Site Title", "My Simple Static Site");
     siteProject.AddGlobalProjectValue("Author", "Brian Haddad");
+    siteProject.AddBuildTarget("dev", testProjectPath.Replace("\\", "/") + "/build/dev");
     var sortOrder = 0;
     var homePage = new PageDefinition
     {
@@ -85,7 +86,7 @@ if (userEntry == "Y")
     }
     else
     {
-        var result = siteProject.Compile();
+        var result = siteProject.Compile("dev");
         if (!result.Success)
         {
             Console.WriteLine(result.Message);

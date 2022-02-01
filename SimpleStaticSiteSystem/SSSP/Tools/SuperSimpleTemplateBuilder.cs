@@ -11,31 +11,42 @@ namespace SSSP.Tools
         //TODO: this file has a lot of random strings scattered throughout
         //Some of these values will be required in another class probably...
         private const string BUILD_SUBDIR = @"\build";
-        private const string PATH_SEPARATOR = @"\";
+        private const string FILE_PATH_SEPARATOR = @"\";
+        private const string WEB_PATH_SEPARATOR = @"/";
 
         private string currentBuildPath = "";
+        private string currentBaseUrl = "";
+        private string currentEnv = "";
         private HtmlNode nav;
 
-        private string TemplatePath => currentBuildPath + PATH_SEPARATOR + "templates";
-        private string ContentPath => currentBuildPath + PATH_SEPARATOR + "content";
-        private string SnippetsPath => currentBuildPath + PATH_SEPARATOR + "snippets";
+        private string FullBuildToPath => currentBuildPath + BUILD_SUBDIR + FILE_PATH_SEPARATOR + currentEnv;
+        private string FullSourcePath => currentBuildPath + FILE_PATH_SEPARATOR;
+        private string TemplateSourcePath => FullSourcePath + "templates";
+        private string ContentSourcePath => FullSourcePath + "content";
+        private string SnippetsSourcePath => FullSourcePath + "snippets";
+        private string StylesSourcePath => FullSourcePath + "styles";
 
         public SuperSimpleTemplateBuilder(ISuperSimpleHtmlFileHandler fileHandler)
         {
             _fileHandler = fileHandler ?? throw new ArgumentNullException(nameof(fileHandler));
         }
 
-        public void Build(StaticSiteProject project, string path)
+        public void Build(StaticSiteProject project, string path, string env)
         {
+            //TODO: before doing the build we may need to check for an existing build for this env
+            //if it exists, delete it
             currentBuildPath = path;
+            currentEnv = env;
+            if (!project.SiteBuildTargets.ContainsKey(currentEnv))
+            {
+                throw new BuildException($"No build data for '{currentEnv}' environment.");
+            }
+            currentBaseUrl = project.SiteBuildTargets[currentEnv];
             var results = new List<HtmlFile>();
 
-            //TODO: poopy poo poo problem... Relative navigation links means this needs to be rebuild for each page,
-            //AND the links need to be calculated based on the context of the current page, with a level of "../"
-            //for each difference between current and other directory...
-            //Alternatively, we can use absolute links using the full site path, but then it won't run locally
-            //without two different build processes (dev and release, where release gets uploaded).
-            var navFile = _fileHandler.ReadFile(TemplatePath, "Nav.sht");
+            //TODO: nav can be shared between pages now due to decision to implement absolute URLs,
+            //but what if we want to indicate in the menu what page the visitor is on?
+            var navFile = _fileHandler.ReadFile(TemplateSourcePath, "Nav.sht");
             var sortedPageDefinitions = project.PageDefinitions.OrderBy(x => x.NavMenuSortIndex).ToList();
             var navProject = new StaticSiteProject
             {
@@ -46,20 +57,20 @@ namespace SSSP.Tools
             
             foreach (var page in project.PageDefinitions)
             {
-                if (!_fileHandler.FileExists(TemplatePath, page.PageLayoutTemplate))
+                if (!_fileHandler.FileExists(TemplateSourcePath, page.PageLayoutTemplate))
                 {
                     throw new BuildException($"{page.PageLayoutTemplate} template not found for page: {page.PageTitle}");
                 }
-                var fullPath = currentBuildPath + BUILD_SUBDIR;
+                var fullPath = FullBuildToPath;
                 if (page.PageSubdirectory is not null)
                 {
-                    fullPath += PATH_SEPARATOR + PathText(page.PageSubdirectory);
+                    fullPath += FILE_PATH_SEPARATOR + PathText(page.PageSubdirectory);
                 }
                 var pageHtml = new HtmlFile
                 {
                     Path = fullPath,
                     FileName = page.IsIndex ? "index.htm" : MakeFilename(page.PageTitle) + ".htm",
-                    HtmlDocument = _fileHandler.ReadFile(TemplatePath, page.PageLayoutTemplate),
+                    HtmlDocument = _fileHandler.ReadFile(TemplateSourcePath, page.PageLayoutTemplate),
                 };
 
                 pageHtml.HtmlDocument.RootNode = PerformBuildActions(pageHtml.HtmlDocument.RootNode, project, page);
@@ -90,19 +101,11 @@ namespace SSSP.Tools
                     {
                         var filename = href.Value;
                         var stylesPath = "styles";
-                        var hrefPath = stylesPath + "/" + filename;
-                        if (page.PageSubdirectory is not null && page.PageSubdirectory.Length > 0)
-                        {
-                            //TODO: verify this works!
-                            node.Attributes[node.Attributes.IndexOf(href)].Value = "../" + hrefPath;
-                        }
-                        else
-                        {
-                            node.Attributes[node.Attributes.IndexOf(href)].Value = hrefPath;
-                        }
-                        var requiredFileExists = _fileHandler.FileExists(currentBuildPath + BUILD_SUBDIR + PATH_SEPARATOR + stylesPath, filename);
-                        if (!requiredFileExists &&
-                            !_fileHandler.CopyFile(filename, currentBuildPath + PATH_SEPARATOR + stylesPath, currentBuildPath + BUILD_SUBDIR + PATH_SEPARATOR + stylesPath))
+                        var hrefPath = currentBaseUrl + WEB_PATH_SEPARATOR + stylesPath + WEB_PATH_SEPARATOR + filename;
+                        node.Attributes[node.Attributes.IndexOf(href)].Value = hrefPath;
+                        var fileAlreadyCopiedToOutput = _fileHandler.FileExists(FullBuildToPath + FILE_PATH_SEPARATOR + stylesPath, filename);
+                        if (!fileAlreadyCopiedToOutput &&
+                            !_fileHandler.CopyFile(filename, StylesSourcePath, FullBuildToPath + FILE_PATH_SEPARATOR + stylesPath))
                         {
                             throw new BuildException($"Could not copy file: {filename}");
                         }
@@ -145,7 +148,7 @@ namespace SSSP.Tools
             {
                 if (node.Attributes?.Count(x => x.Name == "page-content") == node.Attributes?.Count)
                 {
-                    var content = _fileHandler.ReadFile(ContentPath, MakeFilename(page.PageTitle) + ".shc");
+                    var content = _fileHandler.ReadFile(ContentSourcePath, MakeFilename(page.PageTitle) + ".shc");
                     return PerformBuildActions(content.RootNode, project, page);
                 }
 
@@ -156,11 +159,12 @@ namespace SSSP.Tools
 
                 if (node.Attributes?.Count(x => x.Name == "page-link") == node.Attributes?.Count)
                 {
-                    var hrefPath = page.IsIndex ? "index.htm" : MakeFilename(page.PageTitle) + ".htm";
+                    var hrefPath = currentBaseUrl + WEB_PATH_SEPARATOR;
                     if (page.PageSubdirectory is not null && page.PageSubdirectory.Length > 0)
                     {
-                        hrefPath = PathText(page.PageSubdirectory) + "/" + hrefPath;
+                        hrefPath += PathText(page.PageSubdirectory) + WEB_PATH_SEPARATOR;
                     }
+                    hrefPath += page.IsIndex ? "index.htm" : MakeFilename(page.PageTitle) + ".htm";
                     var href = new HtmlNodeAttribute
                     {
                         Name = "href",
@@ -180,7 +184,7 @@ namespace SSSP.Tools
                 if (node.Attributes?.Count(x => x.Name == "node-replacement") == 1
                     && node.Children?.Count(c => c.TagName?.ToUpper() == "NAV-LINKS") == node.Children?.Count)
                 {
-                    //TODO: this needs to handle grouping by subdirectory and building up the node tree for the nav
+                    //TODO: test this with a more complex folder structure
                     var attribute = node.Attributes.First(x => x.Name == "node-replacement");
                     node.Attributes.Remove(attribute);
                     var baseLinkSnip = "Nav_link.shs";
@@ -196,7 +200,10 @@ namespace SSSP.Tools
                             var thisSubdirectory = p.PageSubdirectory ?? "";
                             if (canNest && thisSubdirectory.Length > currentSubDirectory.Length)
                             {
-                                var folderFile = _fileHandler.ReadFile(SnippetsPath, "Nav_folder.shs");
+                                //TODO: this file contains a couple issues
+                                //see notes in Nav_folder.shs for more details
+                                //already created IValueProducer to solve this problem
+                                var folderFile = _fileHandler.ReadFile(SnippetsSourcePath, "Nav_folder.shs");
                                 var filtered = project.PageDefinitions
                                     .Where(x => x.PageSubdirectory?.StartsWith(p.PageSubdirectory) ?? false)
                                     .OrderBy(x => x.NavMenuSortIndex)
@@ -212,7 +219,7 @@ namespace SSSP.Tools
                             }
                             else
                             {
-                                var childSnip = _fileHandler.ReadFile(SnippetsPath, baseLinkSnip);
+                                var childSnip = _fileHandler.ReadFile(SnippetsSourcePath, baseLinkSnip);
                                 var c = PerformBuildActions(childSnip.RootNode, project, p);
                                 node.Children.Add(c);
                             }
@@ -221,7 +228,7 @@ namespace SSSP.Tools
                     return node;
                 }
 
-                //TODO: this is temporary. Eventually should probably throw a build error if we get this far.
+                //TODO: this is temporary? Eventually should probably throw a build error if we get this far?
                 return new HtmlNode
                 {
                     TagName = node.Attributes?.FirstOrDefault().Name,

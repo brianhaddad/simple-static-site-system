@@ -27,11 +27,11 @@ namespace SSSP
             _templatebuilder = new SuperSimpleTemplateBuilder(fileHandler);
         }
 
-        public FileActionResult Compile()
+        public FileActionResult Compile(string env)
         {
             try
             {
-                _templatebuilder.Build(CurrentProject, CurrentPath);
+                _templatebuilder.Build(CurrentProject, CurrentPath, env);
                 return FileActionResult.Successful();
             }
             catch (Exception ex)
@@ -58,7 +58,6 @@ namespace SSSP
         {
             if (DirtyUnsavedFile && !forceOpen)
             {
-                //TODO: if current project is unsaved, return error or get confirmation or something...
                 return FileActionResult.Failed("Dirty unsaved file.");
             }
             CurrentPath = path;
@@ -94,6 +93,10 @@ namespace SSSP
             {
                 CurrentProject.GlobalProjectValues = new Dictionary<string, string>();
             }
+            if (CurrentProject.GlobalProjectValues.ContainsKey(key))
+            {
+                return FileActionResult.Failed($"Variable value for '{key}' already set.");
+            }
             CurrentProject.GlobalProjectValues.Add(key, value);
             DirtyUnsavedFile = true;
             return FileActionResult.Successful();
@@ -106,6 +109,21 @@ namespace SSSP
                 CurrentProject.PageDefinitions = new List<PageDefinition>();
             }
             CurrentProject.PageDefinitions.Add(pageDefinition);
+            DirtyUnsavedFile = true;
+            return FileActionResult.Successful();
+        }
+
+        public FileActionResult AddBuildTarget(string env, string baseUrl)
+        {
+            if (CurrentProject.SiteBuildTargets is null)
+            {
+                CurrentProject.SiteBuildTargets = new Dictionary<string, string>();
+            }
+            if (CurrentProject.SiteBuildTargets.ContainsKey(baseUrl))
+            {
+                return FileActionResult.Failed($"Environment data for '{env}' already exists.");
+            }
+            CurrentProject.SiteBuildTargets.Add(env, baseUrl);
             DirtyUnsavedFile = true;
             return FileActionResult.Successful();
         }
