@@ -1,15 +1,11 @@
 <!doctype snippet>
 <li><a href="#"><text-replacement node-directory />
-        <!-- node-directory text replacement not enacted yet -->
         <span class="drop-icon">▾</span>
         <label title="Toggle Drop-down" class="drop-icon" for="sm0">▾</label>
     </a>
     <!-- "sm0" id needs to increment every time I create one of these... -->
     <!-- can look for custom attributes and rewrite them -->
     <input type="checkbox" id="sm0" />
-    <!-- if I do this right, I should be able to build some kind of node tree -->
-    <!-- that will be able to use the existing build proceess to harness the nesting -->
-    <!-- nature of a node tree to automatically build the correct nav structure -->
     <ul class="sub-menu" node-replacement>
         <nav-links nesting />
     </ul>
