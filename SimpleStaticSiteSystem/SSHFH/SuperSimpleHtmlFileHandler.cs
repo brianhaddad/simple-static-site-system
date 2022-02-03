@@ -4,6 +4,9 @@ using SSHPW;
 
 namespace SSHFH
 {
+    //TODO: This should not be a light wrapper or pass-through for the file IO. Give it more purpose!
+    //Need to define a clear language for working with the html files that justifies its existence,
+    //or just remove the layer and use the file IO in the other classes directly.
     public class SuperSimpleHtmlFileHandler : ISuperSimpleHtmlFileHandler
     {
         private readonly IFileIo _fileIO;
@@ -27,6 +30,7 @@ namespace SSHFH
 
         public void WriteFile(HtmlFile file) => WriteFile(file.Path, file.FileName, file.HtmlDocument);
 
+        //TODO: do I really need this one?
         public void WriteFile(string path, string fileName, HtmlDocument document)
         {
             var fileLines = _htmlParserWriter.Stringify(document);
@@ -45,10 +49,12 @@ namespace SSHFH
         public bool CopyFile(string filename, string existingPath, string newPath)
             => _fileIO.CopyFile(filename, existingPath, newPath);
 
-        public bool DirectoryExists(string path)
-            => _fileIO.DirectoryExists(path);
-
-        public void RemoveDirectory(string path, bool force)
-            => _fileIO.DeleteDirectory(path, force);
+        public void RemoveDirectoryIfExists(string path)
+        {
+            if (_fileIO.DirectoryExists(path))
+            {
+                _fileIO.DeleteDirectory(path, true);
+            }
+        }
     }
 }

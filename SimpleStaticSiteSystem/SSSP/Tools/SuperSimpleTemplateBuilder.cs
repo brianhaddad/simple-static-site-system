@@ -40,10 +40,7 @@ namespace SSSP.Tools
                 throw new BuildException($"No build data for '{currentEnv}' environment.");
             }
 
-            if (_fileHandler.DirectoryExists(FullBuildToPath))
-            {
-                _fileHandler.RemoveDirectory(FullBuildToPath, true);
-            }
+            _fileHandler.RemoveDirectoryIfExists(FullBuildToPath);
 
             currentBaseUrl = project.SiteBuildTargets[currentEnv];
             var results = new List<HtmlFile>();

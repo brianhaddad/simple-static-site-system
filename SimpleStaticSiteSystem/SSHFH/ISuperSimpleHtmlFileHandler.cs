@@ -6,8 +6,7 @@ namespace SSHFH
     {
         HtmlDocument ReadFile(string path, string fileName);
         bool FileExists(string path, string fileName);
-        bool DirectoryExists(string path);
-        void RemoveDirectory(string path, bool force);
+        void RemoveDirectoryIfExists(string path);
         void WriteFile(HtmlFile file);
         void WriteFile(string path, string fileName, HtmlDocument document);
         T ReadObject<T>(string path, string filename);
