@@ -44,5 +44,11 @@ namespace SSHFH
 
         public bool CopyFile(string filename, string existingPath, string newPath)
             => _fileIO.CopyFile(filename, existingPath, newPath);
+
+        public bool DirectoryExists(string path)
+            => _fileIO.DirectoryExists(path);
+
+        public void RemoveDirectory(string path, bool force)
+            => _fileIO.DeleteDirectory(path, force);
     }
 }

@@ -94,5 +94,9 @@ namespace SSHFH.Tools
 
         public bool FileExists(string path, string filename) => FileExists(FileFullPath(path, filename));
         public bool FileExists(string filePath) => File.Exists(filePath);
+
+        public bool DirectoryExists(string path) => Directory.Exists(path);
+
+        public void DeleteDirectory(string path, bool force) => Directory.Delete(path, force);
     }
 }

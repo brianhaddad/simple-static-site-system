@@ -33,19 +33,25 @@ namespace SSSP.Tools
 
         public void Build(StaticSiteProject project, string path, string env)
         {
-            //TODO: before doing the build we may need to check for an existing build for this env
-            //if it exists, delete it
             currentBuildPath = path;
             currentEnv = env;
             if (!project.SiteBuildTargets.ContainsKey(currentEnv))
             {
                 throw new BuildException($"No build data for '{currentEnv}' environment.");
             }
+
+            if (_fileHandler.DirectoryExists(FullBuildToPath))
+            {
+                _fileHandler.RemoveDirectory(FullBuildToPath, true);
+            }
+
             currentBaseUrl = project.SiteBuildTargets[currentEnv];
             var results = new List<HtmlFile>();
 
             //TODO: nav can be shared between pages now due to decision to implement absolute URLs,
             //but what if we want to indicate in the menu what page the visitor is on?
+            //In fact, do we need a larger system to add situational modifications to highlight components?
+            //This could be used by the tool to highlight a panel being edited, for example.
             var navFile = _fileHandler.ReadFile(TemplateSourcePath, "Nav.sht");
             var sortedPageDefinitions = project.PageDefinitions.OrderBy(x => x.NavMenuSortIndex).ToList();
             var navProject = new StaticSiteProject
@@ -228,12 +234,7 @@ namespace SSSP.Tools
                     return node;
                 }
 
-                //TODO: this is temporary? Eventually should probably throw a build error if we get this far?
-                return new HtmlNode
-                {
-                    TagName = node.Attributes?.FirstOrDefault().Name,
-                    ForceSeparateCloseTagForEmptyNode = true,
-                };
+                return new HtmlNode($" {node.TagName} with {node.Attributes?.FirstOrDefault().Name} value was unhandled. ", true);
             }
 
             if (node.Children?.Count > 0)
@@ -246,10 +247,8 @@ namespace SSSP.Tools
             return node;
         }
 
-        private string MakeFilename(string title)
-            => title.RegexReplace("[^a-zA-Z0-9]", "-").ToLower();
+        private string MakeFilename(string title) => title.RegexReplace("[^a-zA-Z0-9]", "-").ToLower();
 
-        private string PathText(string text)
-            => text.RegexReplace(@"[^a-zA-Z0-9\/]", "");
+        private string PathText(string text) => text.RegexReplace(@"[^a-zA-Z0-9\/]", "");
     }
 }

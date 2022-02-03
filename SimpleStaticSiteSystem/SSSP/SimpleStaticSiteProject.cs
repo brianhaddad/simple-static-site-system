@@ -45,6 +45,7 @@ namespace SSSP
             //TODO: also check to see if file already exists?
             if (DirtyUnsavedFile && !forceCreate)
             {
+                //Attempting to create new when the class was already managing an existing and unsaved file.
                 return FileActionResult.Failed("Dirty unsaved file.");
             }
             CurrentPath = path;
