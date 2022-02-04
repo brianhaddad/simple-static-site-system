@@ -20,9 +20,25 @@ namespace SSSS
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool DevMode = false;
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void SystemModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            DevMode = !DevMode;
+            if (DevMode)
+            {
+                SystemModeButton.Content = FindResource("DeveloperMode");
+                NewButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SystemModeButton.Content = FindResource("DesignerMode");
+                NewButton.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

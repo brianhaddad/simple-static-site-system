@@ -8,7 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="019-files.png" />
+    <None Remove="020-file.png" />
+    <None Remove="022-folder.png" />
+    <None Remove="036-coding.png" />
+    <None Remove="046-diskette.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SSSP\SSSP.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="019-files.png" />
+    <Resource Include="020-file.png" />
+    <Resource Include="022-folder.png" />
+    <Resource Include="036-coding.png" />
+    <Resource Include="046-diskette.png" />
   </ItemGroup>
 
 </Project>

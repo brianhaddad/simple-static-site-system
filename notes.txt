@@ -22,3 +22,9 @@ Snippet files		.shs
 Template files		.sht
 Configuration file	.ssc
 	contains global settings and user defined variables.
+
+
+
+
+<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
