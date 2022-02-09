@@ -1,4 +1,8 @@
-﻿using System;
+﻿using SSHFH;
+using SSHFH.Tools;
+using SSHPW;
+using SSSP;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,15 +24,45 @@ namespace SSSS
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly ISimpleStaticSiteProject SiteProject;
         private bool DevMode = false;
         public MainWindow()
         {
             InitializeComponent();
+            SiteProject = new SimpleStaticSiteProject(new SuperSimpleHtmlFileHandler(new FileIo(), new SuperSimpleHtmlParserWriter()));
+            EvaluateButtonStates();
+            EvaluateDevMode();
         }
 
         private void SystemModeButton_Click(object sender, RoutedEventArgs e)
         {
             DevMode = !DevMode;
+            EvaluateDevMode();
+        }
+
+        private void NewButton_Click(object sender, RoutedEventArgs e)
+        {
+            //actually need a wizard or popup to fill in this data...
+            //var result = SiteProject.CreateNew("", "", false);
+        }
+
+        private void OpenButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EvaluateButtonStates()
+        {
+            SaveButton.IsEnabled = SiteProject.UnsavedChanges;
+        }
+
+        private void EvaluateDevMode()
+        {
             if (DevMode)
             {
                 SystemModeButton.Content = FindResource("DeveloperMode");

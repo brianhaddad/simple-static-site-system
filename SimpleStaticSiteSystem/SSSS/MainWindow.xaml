@@ -13,13 +13,13 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button x:Name="NewButton" Command="New" Visibility="Collapsed">
+                <Button x:Name="NewButton" Click="NewButton_Click">
                     <Image Source="/020-file.png" Width="32" />
                 </Button>
-                <Button Command="Open">
+                <Button x:Name="OpenButton" Click="OpenButton_Click">
                     <Image Source="/022-folder.png" Width="32" />
                 </Button>
-                <Button Command="Save">
+                <Button x:Name="SaveButton" Click="SaveButton_Click">
                     <Image Source="/046-diskette.png" Width="32" />
                 </Button>
             </ToolBar>

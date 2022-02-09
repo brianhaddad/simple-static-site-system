@@ -27,6 +27,11 @@ namespace SSSP
             _templatebuilder = new SuperSimpleTemplateBuilder(fileHandler);
         }
 
+        //TODO: maybe some kind of eventing and a way to register methods to run as event handlers?
+        //When the DirtyUnsavedFile value changes, some things will need to be run in the interface
+        //to enable or disable buttons.
+        public bool UnsavedChanges => DirtyUnsavedFile;
+
         public FileActionResult Compile(string env)
         {
             try

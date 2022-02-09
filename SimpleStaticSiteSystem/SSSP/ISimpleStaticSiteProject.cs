@@ -13,5 +13,7 @@ namespace SSSP
         FileActionResult AddGlobalProjectValue(string key, string value);
         FileActionResult AddBuildTarget(string env, string baseUrl);
         FileActionResult AddPage(PageDefinition pageDefinition);
+
+        bool UnsavedChanges { get; }
     }
 }
