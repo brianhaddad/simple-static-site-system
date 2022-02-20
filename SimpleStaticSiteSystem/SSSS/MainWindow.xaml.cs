@@ -2,6 +2,7 @@
 using SSHFH.Tools;
 using SSHPW;
 using SSSP;
+using SSSS.NewSiteProjectWizard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,13 @@ namespace SSSS
         {
             //actually need a wizard or popup to fill in this data...
             //var result = SiteProject.CreateNew("", "", false);
+            var wizard = new NewSiteProjectWizardDialogBox(SiteProject);
+            var showDialog = wizard.ShowDialog();
+            var dialogResult = showDialog is not null && (bool)showDialog;
+            if (dialogResult)
+            {
+                SiteProject.Save();
+            }
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
