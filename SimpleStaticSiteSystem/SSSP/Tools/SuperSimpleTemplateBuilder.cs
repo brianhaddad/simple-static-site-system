@@ -102,6 +102,8 @@ namespace SSSP.Tools
                     var href = node.Attributes.FirstOrDefault(a => a.Name.ToUpper() == "HREF");
                     if (href is not null)
                     {
+                        //TODO: this system won't handle external style sheets that are linked online.
+                        //Need a way to check the current value to make sure it's one we should translate.
                         var filename = href.Value;
                         var stylesPath = "styles";
                         var hrefPath = currentBaseUrl + WEB_PATH_SEPARATOR + stylesPath + WEB_PATH_SEPARATOR + filename;

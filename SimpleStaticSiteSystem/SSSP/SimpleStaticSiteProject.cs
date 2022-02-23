@@ -125,7 +125,7 @@ namespace SSSP
             {
                 CurrentProject.SiteBuildTargets = new Dictionary<string, string>();
             }
-            if (CurrentProject.SiteBuildTargets.ContainsKey(baseUrl))
+            if (CurrentProject.SiteBuildTargets.ContainsKey(env))
             {
                 return FileActionResult.Failed($"Environment data for '{env}' already exists.");
             }
