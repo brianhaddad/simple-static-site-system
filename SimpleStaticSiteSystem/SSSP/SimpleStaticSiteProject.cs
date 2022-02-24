@@ -1,6 +1,7 @@
 ﻿using SSClasses;
 using SSHFH;
 using SSSP.Classes;
+using SSSP.ProjectValues;
 using SSSP.Tools;
 
 namespace SSSP
@@ -14,12 +15,14 @@ namespace SSSP
         private StaticSiteProject CurrentProject;
 
         private bool DirtyUnsavedFile = false;
+        //TODO: allow wizard/user to define files that need to be written out
+        //but delay writing the files until saved?
+        private List<HtmlFile> unwrittenHtmlFiles = new();
 
-        private const string ProjectFileExtension = ".ssc";
         private string FullProjectFilename
-            => CurrentFileName.EndsWith(ProjectFileExtension)
+            => CurrentFileName.EndsWith(ProjectFileTypes.ProjectConfigType)
                 ? CurrentFileName
-                : CurrentFileName + ProjectFileExtension;
+                : CurrentFileName + ProjectFileTypes.ProjectConfigType;
 
         public SimpleStaticSiteProject(ISuperSimpleHtmlFileHandler fileHandler)
         {
@@ -83,6 +86,8 @@ namespace SSSP
         {
             try
             {
+                //TODO: if the directory doesn't exist it's a firsttime create.
+                //Need to create the folder structure in addition to saving the project file.
                 _fileHandler.SaveObject(CurrentPath, FullProjectFilename, CurrentProject);
                 DirtyUnsavedFile = false;
                 return FileActionResult.Successful();
@@ -119,6 +124,21 @@ namespace SSSP
             return FileActionResult.Successful();
         }
 
+        public FileActionResult AddTemplate(HtmlFile template)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FileActionResult AddContent(HtmlFile content)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FileActionResult AddSnippet(HtmlFile snippet)
+        {
+            throw new NotImplementedException();
+        }
+
         public FileActionResult AddBuildTarget(string env, string baseUrl)
         {
             if (CurrentProject.SiteBuildTargets is null)
@@ -127,6 +147,8 @@ namespace SSSP
             }
             if (CurrentProject.SiteBuildTargets.ContainsKey(env))
             {
+                //TODO: might actually want to let the value be updated...
+                //Maybe another force update bool value for the method?
                 return FileActionResult.Failed($"Environment data for '{env}' already exists.");
             }
             CurrentProject.SiteBuildTargets.Add(env, baseUrl);

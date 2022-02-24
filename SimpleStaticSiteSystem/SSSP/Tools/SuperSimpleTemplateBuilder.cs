@@ -2,6 +2,7 @@
 using SSHFH;
 using SSHPW.Extensions;
 using SSSP.Exceptions;
+using SSSP.ProjectValues;
 
 namespace SSSP.Tools
 {
@@ -10,9 +11,10 @@ namespace SSSP.Tools
         private readonly ISuperSimpleHtmlFileHandler _fileHandler;
         //TODO: this file has a lot of random strings scattered throughout
         //Some of these values will be required in another class probably...
-        private const string BUILD_SUBDIR = @"\build";
         private const string FILE_PATH_SEPARATOR = @"\";
         private const string WEB_PATH_SEPARATOR = @"/";
+
+        private const string BUILD_SUBDIR = FILE_PATH_SEPARATOR + ProjectFolders.Build;
 
         private string currentBuildPath = "";
         private string currentBaseUrl = "";
@@ -21,10 +23,10 @@ namespace SSSP.Tools
 
         private string FullBuildToPath => currentBuildPath + BUILD_SUBDIR + FILE_PATH_SEPARATOR + currentEnv;
         private string FullSourcePath => currentBuildPath + FILE_PATH_SEPARATOR;
-        private string TemplateSourcePath => FullSourcePath + "templates";
-        private string ContentSourcePath => FullSourcePath + "content";
-        private string SnippetsSourcePath => FullSourcePath + "snippets";
-        private string StylesSourcePath => FullSourcePath + "styles";
+        private string TemplateSourcePath => FullSourcePath + ProjectFolders.Templates;
+        private string ContentSourcePath => FullSourcePath + ProjectFolders.Content;
+        private string SnippetsSourcePath => FullSourcePath + ProjectFolders.Snippets;
+        private string StylesSourcePath => FullSourcePath + ProjectFolders.Styles;
 
         public SuperSimpleTemplateBuilder(ISuperSimpleHtmlFileHandler fileHandler)
         {
@@ -49,7 +51,7 @@ namespace SSSP.Tools
             //but what if we want to indicate in the menu what page the visitor is on?
             //In fact, do we need a larger system to add situational modifications to highlight components?
             //This could be used by the tool to highlight a panel being edited, for example.
-            var navFile = _fileHandler.ReadFile(TemplateSourcePath, "Nav.sht");
+            var navFile = _fileHandler.ReadFile(TemplateSourcePath, "Nav" + ProjectFileTypes.TemplateFileType); //TODO: always be named Nav?
             var sortedPageDefinitions = project.PageDefinitions.OrderBy(x => x.NavMenuSortIndex).ToList();
             var navProject = new StaticSiteProject
             {
@@ -72,7 +74,7 @@ namespace SSSP.Tools
                 var pageHtml = new HtmlFile
                 {
                     Path = fullPath,
-                    FileName = page.IsIndex ? "index.htm" : MakeFilename(page.PageTitle) + ".htm",
+                    FileName = page.IsIndex ? ProjectFileTypes.IndexHtm : MakeFilename(page.PageTitle) + ProjectFileTypes.Htm,
                     HtmlDocument = _fileHandler.ReadFile(TemplateSourcePath, page.PageLayoutTemplate),
                 };
 
@@ -105,7 +107,7 @@ namespace SSSP.Tools
                         //TODO: this system won't handle external style sheets that are linked online.
                         //Need a way to check the current value to make sure it's one we should translate.
                         var filename = href.Value;
-                        var stylesPath = "styles";
+                        var stylesPath = ProjectFolders.Styles;
                         var hrefPath = currentBaseUrl + WEB_PATH_SEPARATOR + stylesPath + WEB_PATH_SEPARATOR + filename;
                         node.Attributes[node.Attributes.IndexOf(href)].Value = hrefPath;
                         var fileAlreadyCopiedToOutput = _fileHandler.FileExists(FullBuildToPath + FILE_PATH_SEPARATOR + stylesPath, filename);
@@ -153,7 +155,7 @@ namespace SSSP.Tools
             {
                 if (node.Attributes?.Count(x => x.Name == "page-content") == node.Attributes?.Count)
                 {
-                    var content = _fileHandler.ReadFile(ContentSourcePath, MakeFilename(page.PageTitle) + ".shc");
+                    var content = _fileHandler.ReadFile(ContentSourcePath, MakeFilename(page.PageTitle) + ProjectFileTypes.ContentFileType);
                     return PerformBuildActions(content.RootNode, project, page);
                 }
 
@@ -169,7 +171,7 @@ namespace SSSP.Tools
                     {
                         hrefPath += PathText(page.PageSubdirectory) + WEB_PATH_SEPARATOR;
                     }
-                    hrefPath += page.IsIndex ? "index.htm" : MakeFilename(page.PageTitle) + ".htm";
+                    hrefPath += page.IsIndex ? ProjectFileTypes.IndexHtm : MakeFilename(page.PageTitle) + ProjectFileTypes.Htm;
                     var href = new HtmlNodeAttribute
                     {
                         Name = "href",
@@ -192,7 +194,7 @@ namespace SSSP.Tools
                     //TODO: test this with a more complex folder structure
                     var attribute = node.Attributes.First(x => x.Name == "node-replacement");
                     node.Attributes.Remove(attribute);
-                    var baseLinkSnip = "Nav_link.shs";
+                    var baseLinkSnip = "Nav_link" + ProjectFileTypes.SnippetFileType;
                     var menuData = node.Children.First().Attributes.ToArray();
                     var canNest = menuData.Any(x => x.Name == "nesting" && x.IsImplicitTrue);
                     node.Children.Clear();
@@ -208,7 +210,7 @@ namespace SSSP.Tools
                                 //TODO: this file contains a couple issues
                                 //see notes in Nav_folder.shs for more details
                                 //already created IValueProducer to solve this problem
-                                var folderFile = _fileHandler.ReadFile(SnippetsSourcePath, "Nav_folder.shs");
+                                var folderFile = _fileHandler.ReadFile(SnippetsSourcePath, "Nav_folder" + ProjectFileTypes.SnippetFileType);
                                 var filtered = project.PageDefinitions
                                     .Where(x => x.PageSubdirectory?.StartsWith(p.PageSubdirectory) ?? false)
                                     .OrderBy(x => x.NavMenuSortIndex)

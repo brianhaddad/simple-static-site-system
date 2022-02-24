@@ -7,6 +7,7 @@ namespace SSSS.NewSiteProjectWizard
 {
     /// <summary>
     /// Interaction logic for NewSiteProjectWizardPage1.xaml
+    /// This page is for collecting the project name and picking a location for the file.
     /// </summary>
     public partial class NewSiteProjectWizardPage1 : PageFunction<WizardResult>
     {
