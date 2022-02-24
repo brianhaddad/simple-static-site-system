@@ -19,10 +19,20 @@ Console.WriteLine("Write test files? [Y/n]");
 var userEntry = Console.ReadLine();
 if (userEntry == "Y")
 {
+    //TODO: implement these steps in the new project wizard.
+    //First step: need a filename and a directory.
     siteProject.CreateNew(testProjectPath, testProjectName);
+
+    //Next step: get a site title and an author name.
     siteProject.AddGlobalProjectValue("Site Title", "My Simple Static Site");
     siteProject.AddGlobalProjectValue("Author", "Brian Haddad");
+
+    //Default: add a dev build target. (maybe do this during first step?)
+    //Optional: get build target data for the actual production site:
     siteProject.AddBuildTarget("dev", testProjectPath.Replace("\\", "/") + "/build/dev");
+
+    //Next step: build an index/home page?
+    //Add/define the templates. These will need to be written out to their locations...
     var sortOrder = 0;
     var homePage = new PageDefinition
     {
