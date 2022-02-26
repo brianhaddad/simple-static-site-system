@@ -1,6 +1,6 @@
 ﻿using SSSS.Enums;
 
-namespace SSSS.NewSiteProjectWizard
+namespace SSSS
 {
     public class NewSiteProjectWizardReturnEventArgs
     {

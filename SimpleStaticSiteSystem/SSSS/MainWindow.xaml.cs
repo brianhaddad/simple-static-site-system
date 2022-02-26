@@ -2,7 +2,7 @@
 using SSHFH.Tools;
 using SSHPW;
 using SSSP;
-using SSSS.NewSiteProjectWizard;
+using SSSS;
 using System;
 using System.Collections.Generic;
 using System.Linq;

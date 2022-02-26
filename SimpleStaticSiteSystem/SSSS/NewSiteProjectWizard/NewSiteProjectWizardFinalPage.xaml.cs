@@ -3,12 +3,12 @@ using SSSS.Enums;
 using System.Windows;
 using System.Windows.Navigation;
 
-namespace SSSS.NewSiteProjectWizard
+namespace SSSS
 {
     /// <summary>
     /// Interaction logic for NewSiteProjectWizardFinalPage.xaml
     /// </summary>
-    public partial class NewSiteProjectWizardFinalPage : PageFunction<WizardResult>
+    public partial class NewSiteProjectWizardFinalPage : WizardResultPageFunction
     {
         public NewSiteProjectWizardFinalPage(ISimpleStaticSiteProject project)
         {

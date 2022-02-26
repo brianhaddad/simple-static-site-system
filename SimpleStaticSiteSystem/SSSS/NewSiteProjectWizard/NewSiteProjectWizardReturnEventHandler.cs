@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SSSS.NewSiteProjectWizard
+﻿namespace SSSS
 {
     public delegate void NewSiteProjectWizardReturnEventHandler(object sender, NewSiteProjectWizardReturnEventArgs e);
 }

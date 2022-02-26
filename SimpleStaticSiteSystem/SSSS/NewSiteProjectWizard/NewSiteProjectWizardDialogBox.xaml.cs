@@ -2,7 +2,7 @@
 using SSSS.Enums;
 using System.Windows.Navigation;
 
-namespace SSSS.NewSiteProjectWizard
+namespace SSSS
 {
     /// <summary>
     /// Interaction logic for NewSiteProjectWizardDialogBox.xaml

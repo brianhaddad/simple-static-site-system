@@ -8,6 +8,9 @@ namespace SSSP
 {
     public class SimpleStaticSiteProject : ISimpleStaticSiteProject
     {
+        public string UserSelectedFolderLocation { get; set; }
+        public string UserSelectedFileName { get; set; }
+
         private readonly ISuperSimpleHtmlFileHandler _fileHandler;
         private readonly ISuperSimpleTemplateBuilder _templatebuilder;
         private string CurrentFileName = "";

@@ -17,6 +17,10 @@ namespace SSSP
         FileActionResult AddContent(HtmlFile content);
         FileActionResult AddSnippet(HtmlFile snippet);
 
+        //Dialog Helpers
+        string UserSelectedFolderLocation { get; set; }
+        string UserSelectedFileName { get; set; }
+
         bool UnsavedChanges { get; }
     }
 }

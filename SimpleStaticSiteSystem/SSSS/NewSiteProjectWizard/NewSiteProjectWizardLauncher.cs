@@ -3,7 +3,7 @@ using SSSS.Enums;
 using System;
 using System.Windows.Navigation;
 
-namespace SSSS.NewSiteProjectWizard
+namespace SSSS
 {
     public class NewSiteProjectWizardLauncher : PageFunction<ISimpleStaticSiteProject>
     {

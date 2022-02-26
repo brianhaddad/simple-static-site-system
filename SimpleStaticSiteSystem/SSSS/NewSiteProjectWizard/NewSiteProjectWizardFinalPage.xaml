@@ -1,12 +1,10 @@
-﻿<PageFunction
+﻿<local:WizardResultPageFunction
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:SSSS.NewSiteProjectWizard"
-    xmlns:local1="clr-namespace:SSSS.Enums"
-    x:Class="SSSS.NewSiteProjectWizard.NewSiteProjectWizardFinalPage"
-    x:TypeArguments="local1:WizardResult"
+    xmlns:local="clr-namespace:SSSS"
+    x:Class="SSSS.NewSiteProjectWizardFinalPage"
     KeepAlive="True"
-    FocusManager.FocusedElement="{Binding ElementName=dataItem1TextBox}" 
+    FocusManager.FocusedElement="{Binding ElementName=dataItem3TextBox}" 
     WindowTitle="New Site Project Wizard Final Page"
     >
     <Grid>
@@ -34,4 +32,4 @@
         </StackPanel>
 
     </Grid>
-</PageFunction>
+</local:WizardResultPageFunction>
