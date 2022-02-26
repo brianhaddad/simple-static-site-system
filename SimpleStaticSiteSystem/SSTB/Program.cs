@@ -4,6 +4,7 @@ using SSHFH;
 using SSHFH.Tools;
 using SSHPW;
 using SSSP;
+using SSSP.ProjectValues;
 
 var siteProject = new SimpleStaticSiteProject(new SuperSimpleHtmlFileHandler(new FileIo(), new SuperSimpleHtmlParserWriter()));
 
@@ -24,8 +25,8 @@ if (userEntry == "Y")
     siteProject.CreateNew(testProjectPath, testProjectName);
 
     //Next step: get a site title and an author name.
-    siteProject.AddGlobalProjectValue("Site Title", "My Simple Static Site");
-    siteProject.AddGlobalProjectValue("Author", "Brian Haddad");
+    siteProject.SetGlobalProjectValue(GlobalValueKeys.SiteTitle, "My Simple Static Site");
+    siteProject.SetGlobalProjectValue(GlobalValueKeys.Author, "Brian Haddad");
 
     //Default: add a dev build target. (maybe do this during first step?)
     //Optional: get build target data for the actual production site:

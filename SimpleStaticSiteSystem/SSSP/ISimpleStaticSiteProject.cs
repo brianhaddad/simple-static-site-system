@@ -10,7 +10,7 @@ namespace SSSP
         FileActionResult Save();
         FileActionResult Compile(string env);
 
-        FileActionResult AddGlobalProjectValue(string key, string value);
+        FileActionResult SetGlobalProjectValue(string key, string value);
         FileActionResult AddBuildTarget(string env, string baseUrl);
         FileActionResult AddPage(PageDefinition pageDefinition);
         FileActionResult AddTemplate(HtmlFile template);
@@ -21,6 +21,8 @@ namespace SSSP
         string UserSelectedFolderLocation { get; set; }
         string UserSelectedFileName { get; set; }
 
+        //General Readonly Access
         bool UnsavedChanges { get; }
+        Dictionary<string, string> GlobalProjectValues { get; }
     }
 }

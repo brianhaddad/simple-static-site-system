@@ -1,7 +1,9 @@
 using SSSP;
 using SSSS.Enums;
+using SSSS.Helpers;
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
@@ -20,6 +22,7 @@ namespace SSSS
 
             project.UserSelectedFolderLocation =
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SimpleStaticSites");
+            project.UserSelectedFileName = "NewProject";
 
             // Bind wizard state to UI
             DataContext = project;
@@ -27,11 +30,27 @@ namespace SSSS
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
-            var test = DataContext as ISimpleStaticSiteProject;
-            // Go to next wizard page
-            //var wizardPage2 = new WizardPage2((ISimpleStaticSiteProject) DataContext);
-            //wizardPage2.Return += wizardPage_Return;
-            //NavigationService?.Navigate(wizardPage2);
+            // Check for valid data:
+            var project = (ISimpleStaticSiteProject)DataContext;
+            //TODO: doing this even when nothing has changed causes all downstream data to be reset.
+            //Is this the desired behavior?
+            var result = project.CreateNew(project.UserSelectedFolderLocation, project.UserSelectedFileName, true);
+
+            if (Path.IsPathFullyQualified(userSelectedFolderLocation.Text) && result.Success)
+            {
+                // Go to next wizard page
+                var wizardPage2 = new NewSiteProjectWizardPage2(project);
+                wizardPage2.Return += wizardPage_Return;
+                NavigationService?.Navigate(wizardPage2);
+            }
+            else
+            {
+                userSelectedFolderLocation.Focus();
+                if (!result.Success)
+                {
+                    result.Alert();
+                }
+            }
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)

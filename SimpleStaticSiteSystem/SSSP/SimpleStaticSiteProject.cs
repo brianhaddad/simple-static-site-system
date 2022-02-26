@@ -37,6 +37,7 @@ namespace SSSP
         //When the DirtyUnsavedFile value changes, some things will need to be run in the interface
         //to enable or disable buttons.
         public bool UnsavedChanges => DirtyUnsavedFile;
+        public Dictionary<string, string> GlobalProjectValues => CurrentProject?.GlobalProjectValues ?? new();
 
         public FileActionResult Compile(string env)
         {
@@ -59,6 +60,30 @@ namespace SSSP
                 //Attempting to create new when the class was already managing an existing and unsaved file.
                 return FileActionResult.Failed("Dirty unsaved file.");
             }
+
+            var illegalFileCharacters = Path.GetInvalidFileNameChars();
+            var illegalPathCharacters = Path.GetInvalidPathChars();
+            var badPath = illegalPathCharacters.Any(c => path.Contains(c));
+            var badFileName = illegalFileCharacters.Any(c => projectName.Contains(c));
+            var goodValues = !badPath && !badFileName;
+            if (!goodValues)
+            {
+                var message = "Bad data!";
+                if (badPath)
+                {
+                    var removePathCharacters = illegalPathCharacters.Where(c => path.Contains(c));
+                    message += "\nThe path contains illegal characters. Please remove the following characters:";
+                    message += "\n" + string.Join(", ", removePathCharacters);
+                }
+                if (badFileName)
+                {
+                    var removeFilenameCharacters = illegalFileCharacters.Where(c => projectName.Contains(c));
+                    message += "\nThe file name contains illegal characters. Please remove the following characters:";
+                    message += "\n" + string.Join(", ", removeFilenameCharacters);
+                }
+                return FileActionResult.Failed(message);
+            }
+
             CurrentPath = path;
             CurrentFileName = projectName;
             CurrentProject = new StaticSiteProject();
@@ -101,7 +126,7 @@ namespace SSSP
             }
         }
 
-        public FileActionResult AddGlobalProjectValue(string key, string value)
+        public FileActionResult SetGlobalProjectValue(string key, string value)
         {
             if (CurrentProject.GlobalProjectValues is null)
             {
@@ -109,9 +134,12 @@ namespace SSSP
             }
             if (CurrentProject.GlobalProjectValues.ContainsKey(key))
             {
-                return FileActionResult.Failed($"Variable value for '{key}' already set.");
+                CurrentProject.GlobalProjectValues[key] = value;
             }
-            CurrentProject.GlobalProjectValues.Add(key, value);
+            else
+            {
+                CurrentProject.GlobalProjectValues.Add(key, value);
+            }
             DirtyUnsavedFile = true;
             return FileActionResult.Successful();
         }
