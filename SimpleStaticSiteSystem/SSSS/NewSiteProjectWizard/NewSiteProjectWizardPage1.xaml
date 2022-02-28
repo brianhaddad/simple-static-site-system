@@ -16,7 +16,7 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
-            <ColumnDefinition Width="32" />
+            <ColumnDefinition Width="24" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -29,11 +29,11 @@
         </Grid.RowDefinitions>
 
         <Label Grid.Column="1" Grid.Row="1">Project Location:</Label>
-        <TextBox Name="userSelectedFolderLocation" Grid.Column="2" Grid.Row="1" Padding="5,0,5,0" Text="{Binding Path=UserSelectedFolderLocation}" />
-        <Button Name="browseFolder" Click="browseFolder_Click" Grid.Column="3" Grid.Row="1">...</Button>
+        <TextBox Name="userSelectedFolderLocation" Grid.Column="2" Grid.Row="1" Padding="5,0,0,0" Text="{Binding Path=UserSelectedFolderLocation}" Margin="0,5,5,0" />
+        <Button Name="browseFolder" Click="browseFolder_Click" Grid.Column="3" Grid.Row="1" Margin="0,5,0,0">...</Button>
         
         <Label Grid.Column="1" Grid.Row="2">Project File Name:</Label>
-        <TextBox Name="userSelectedFileName" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="2" Padding="5,0,0,0" Text="{Binding Path=UserSelectedFileName}" />
+        <TextBox Name="userSelectedFileName" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="2" Padding="5,0,0,0" Text="{Binding Path=UserSelectedFileName}" Margin="0,5,0,0" />
 
         <Label Grid.Column="1" Grid.Row="3">Resulting Project Directory:</Label>
         <TextBlock Name="combinedProjectDirectory" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="3" Padding="5,5,0,5">

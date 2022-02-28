@@ -1,9 +1,9 @@
 using SSSP;
+using SSSP.Classes;
 using SSSS.Enums;
 using SSSS.Helpers;
 using System;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
@@ -16,6 +16,9 @@ namespace SSSS
     /// </summary>
     public partial class NewSiteProjectWizardPage1 : WizardResultPageFunction
     {
+        private string lastUserSelectedFolderLocation = "";
+        private string lastUserSelectedFileName = "";
+
         public NewSiteProjectWizardPage1(ISimpleStaticSiteProject project)
         {
             InitializeComponent();
@@ -32,12 +35,19 @@ namespace SSSS
         {
             // Check for valid data:
             var project = (ISimpleStaticSiteProject)DataContext;
-            //TODO: doing this even when nothing has changed causes all downstream data to be reset.
-            //Is this the desired behavior?
-            var result = project.CreateNew(project.UserSelectedFolderLocation, project.UserSelectedFileName, true);
+
+            var dataChanged = lastUserSelectedFileName != project.UserSelectedFileName
+                || lastUserSelectedFolderLocation != project.UserSelectedFolderLocation;
+
+            var result = dataChanged
+                ? project.CreateNew(project.UserSelectedFolderLocation, project.UserSelectedFileName, true)
+                : FileActionResult.Successful();
 
             if (Path.IsPathFullyQualified(userSelectedFolderLocation.Text) && result.Success)
             {
+                lastUserSelectedFolderLocation = project.UserSelectedFolderLocation;
+                lastUserSelectedFileName = project.UserSelectedFileName;
+
                 // Go to next wizard page
                 var wizardPage2 = new NewSiteProjectWizardPage2(project);
                 wizardPage2.Return += wizardPage_Return;
