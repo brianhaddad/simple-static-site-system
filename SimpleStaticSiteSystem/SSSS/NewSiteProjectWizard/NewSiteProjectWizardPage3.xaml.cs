@@ -7,12 +7,12 @@ using System.Windows.Navigation;
 namespace SSSS
 {
     /// <summary>
-    /// Interaction logic for NewSiteProjectWizardPage2.xaml
+    /// Interaction logic for NewSiteProjectWizardPage3.xaml
     /// This page is for collecting the project name and picking a location for the file.
     /// </summary>
-    public partial class NewSiteProjectWizardPage2 : WizardResultPageFunction
+    public partial class NewSiteProjectWizardPage3 : WizardResultPageFunction
     {
-        public NewSiteProjectWizardPage2(ISimpleStaticSiteProject project)
+        public NewSiteProjectWizardPage3(ISimpleStaticSiteProject project)
         {
             InitializeComponent();
 
@@ -33,20 +33,12 @@ namespace SSSS
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
             var project = (ISimpleStaticSiteProject)DataContext;
-            if (!string.IsNullOrEmpty(userSelectedSiteTitle.Text))
-            {
-                project.SetGlobalProjectValue(GlobalValueKeys.SiteTitle, userSelectedSiteTitle.Text);
-            }
-            if (!string.IsNullOrEmpty(userSelectedAuthorName.Text))
-            {
-                project.SetGlobalProjectValue(GlobalValueKeys.Author, userSelectedAuthorName.Text);
-            }
-            //TODO: remove the value from the dictionary if the value is empty in the interface...
+            //TODO: so much to do here... Also need to update the interface for the page. :)
 
             // Go to next wizard page
-            var wizardPage3 = new NewSiteProjectWizardPage3(project);
-            wizardPage3.Return += wizardPage_Return;
-            NavigationService?.Navigate(wizardPage3);
+            var finalPage = new NewSiteProjectWizardFinalPage(project);
+            finalPage.Return += wizardPage_Return;
+            NavigationService?.Navigate(finalPage);
         }
 
         private void backButton_Click(object sender, RoutedEventArgs e)
