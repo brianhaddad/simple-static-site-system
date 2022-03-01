@@ -1,6 +1,9 @@
+using SSClasses;
+using SSHPW.Extensions;
 using SSSP;
 using SSSP.ProjectValues;
 using SSSS.Enums;
+using SSSS.Helpers;
 using System.Windows;
 using System.Windows.Navigation;
 
@@ -19,21 +22,35 @@ namespace SSSS
             // Bind wizard state to UI
             DataContext = project;
 
-            var values = project.GlobalProjectValues;
-            if (values.ContainsKey(GlobalValueKeys.SiteTitle))
-            {
-                userSelectedSiteTitle.Text = values[GlobalValueKeys.SiteTitle];
-            }
-            if (values.ContainsKey(GlobalValueKeys.Author))
-            {
-                userSelectedAuthorName.Text = values[GlobalValueKeys.Author];
-            }
+            firstPageTitle.Text = "Home";
         }
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
+            if (firstPageTitle.Text.IsNullEmptyOrWhiteSpace())
+            {
+                WpfHelpers.ErrorAlert("The First Page Title cannot be blank.", "Validation Error");
+                return;
+            }
+
+            if (!((bool)isIndex.IsChecked) && (pageFileName.Text.IsNullEmptyOrWhiteSpace() || pageFileName.Text.IsInvalidFileName()))
+            {
+                //TODO: could be more helpful...
+                WpfHelpers.ErrorAlert("If this isn't going to be index.htm you must specify a valid file name.", "Validation Error");
+                return;
+            }
+
             var project = (ISimpleStaticSiteProject)DataContext;
             //TODO: so much to do here... Also need to update the interface for the page. :)
+            var homePage = new PageDefinition
+            {
+                IsIndex = (bool)isIndex.IsChecked,
+                PageTitle = firstPageTitle.Text,
+                FileName = pageFileName.Text,
+                NavMenuSortIndex = 0,
+                PageLayoutTemplate = "MainLayout.sht",
+            };
+            project.AddPage(homePage);
 
             // Go to next wizard page
             var finalPage = new NewSiteProjectWizardFinalPage(project);

@@ -13,12 +13,17 @@ namespace SSSS.Helpers
                     ? "Success!"
                     : "Failure, but we don't know why!";
             var windowTitle = "File Action Result Message";
-            var button = MessageBoxButton.OK;
             var icon = result.Success
                 ? MessageBoxImage.Information
                 : MessageBoxImage.Error;
 
-            MessageBox.Show(message, windowTitle, button, icon, MessageBoxResult.Yes);
+            Alert(message, windowTitle, icon);
         }
+
+        public static void ErrorAlert(string message, string windowTitle)
+            => Alert(message, windowTitle, MessageBoxImage.Error);
+
+        private static void Alert(string message, string windowTitle, MessageBoxImage icon)
+            => MessageBox.Show(message, windowTitle, MessageBoxButton.OK, icon, MessageBoxResult.OK);
     }
 }

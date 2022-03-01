@@ -6,7 +6,7 @@
     x:Class="SSSS.NewSiteProjectWizardPage1"
     KeepAlive="True"
     FocusManager.FocusedElement="{Binding ElementName=userSelectedFolderLocation}" 
-    WindowTitle="New Site Project Wizard Page 1"
+    WindowTitle="Name and Location for Project Files"
     >
     <local:WizardResultPageFunction.Resources>
         <converters:PathFolderAppender x:Key="PathFolderAppender" />

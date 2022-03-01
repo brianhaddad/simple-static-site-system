@@ -1,5 +1,6 @@
 ﻿using SSClasses;
 using SSHFH;
+using SSHPW.Extensions;
 using SSSP.Classes;
 using SSSP.ProjectValues;
 using SSSP.Tools;
@@ -61,23 +62,21 @@ namespace SSSP
                 return FileActionResult.Failed("Dirty unsaved file.");
             }
 
-            var illegalFileCharacters = Path.GetInvalidFileNameChars();
-            var illegalPathCharacters = Path.GetInvalidPathChars();
-            var badPath = illegalPathCharacters.Any(c => path.Contains(c));
-            var badFileName = illegalFileCharacters.Any(c => projectName.Contains(c));
+            var badPath = path.IsInvalidFilePath();
+            var badFileName = projectName.IsInvalidFileName();
             var goodValues = !badPath && !badFileName;
             if (!goodValues)
             {
                 var message = "Bad data!";
                 if (badPath)
                 {
-                    var removePathCharacters = illegalPathCharacters.Where(c => path.Contains(c));
+                    var removePathCharacters = Path.GetInvalidPathChars().Where(c => path.Contains(c));
                     message += "\nThe path contains illegal characters. Please remove the following characters:";
                     message += "\n" + string.Join(", ", removePathCharacters);
                 }
                 if (badFileName)
                 {
-                    var removeFilenameCharacters = illegalFileCharacters.Where(c => projectName.Contains(c));
+                    var removeFilenameCharacters = Path.GetInvalidFileNameChars().Where(c => projectName.Contains(c));
                     message += "\nThe file name contains illegal characters. Please remove the following characters:";
                     message += "\n" + string.Join(", ", removeFilenameCharacters);
                 }
@@ -116,6 +115,7 @@ namespace SSSP
             {
                 //TODO: if the directory doesn't exist it's a firsttime create.
                 //Need to create the folder structure in addition to saving the project file.
+                //Also need to save files in the unwritten HTML files list.
                 _fileHandler.SaveObject(CurrentPath, FullProjectFilename, CurrentProject);
                 DirtyUnsavedFile = false;
                 return FileActionResult.Successful();
@@ -150,8 +150,18 @@ namespace SSSP
             {
                 CurrentProject.PageDefinitions = new List<PageDefinition>();
             }
+            if (pageDefinition.FileName.IsNullEmptyOrWhiteSpace())
+            {
+                pageDefinition.FileName = pageDefinition.PageTitle.RegexReplace("[^a-zA-Z0-9]", "-");
+            }
             CurrentProject.PageDefinitions.Add(pageDefinition);
             DirtyUnsavedFile = true;
+            if (!_fileHandler.FileExists(Path.Combine(CurrentPath, ProjectFolders.Templates), pageDefinition.PageLayoutTemplate))
+            {
+                //TODO: create a default template file and add it to the unwritten HTML files list.
+                //Maybe check the current unwritten file list to make sure we're not adding a duplicate...
+            }
+            //TODO: also need to add the page's content .shc file to the content folder via the unwritten HTML files list.
             return FileActionResult.Successful();
         }
 

@@ -16,6 +16,7 @@ namespace SSSS
 
             // Bind wizard state to UI
             DataContext = project;
+            //TODO: display the actions that will be taken before the user clicks FINISH.
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
@@ -33,6 +34,7 @@ namespace SSSS
         private void finishButton_Click(object sender, RoutedEventArgs e)
         {
             // Finish the wizard and return bound data to calling page
+            //TODO: attempt to create the files, including the directories, the MainLayout.sht template file, a content file for it... etc.
             OnReturn(new ReturnEventArgs<WizardResult>(WizardResult.Finished));
         }
     }

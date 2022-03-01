@@ -51,5 +51,14 @@ namespace SSHPW.Extensions
 
         public static string[] SplitByNewline(this string text)
             => text.RegexReplace(NewlineRegexText, "[-breakHere-]").Split("[-breakHere-]");
+
+        public static bool IsNullEmptyOrWhiteSpace(this string text)
+            => string.IsNullOrEmpty(text) || string.IsNullOrWhiteSpace(text);
+
+        public static bool IsInvalidFileName(this string text)
+            => Path.GetInvalidFileNameChars().Any(c => text.Contains(c));
+
+        public static bool IsInvalidFilePath(this string text)
+            => Path.GetInvalidPathChars().Any(c => text.Contains(c));
     }
 }

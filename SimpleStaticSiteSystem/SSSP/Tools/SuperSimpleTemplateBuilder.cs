@@ -74,7 +74,7 @@ namespace SSSP.Tools
                 var pageHtml = new HtmlFile
                 {
                     Path = fullPath,
-                    FileName = page.IsIndex ? ProjectFileTypes.IndexHtm : MakeFilename(page.PageTitle) + ProjectFileTypes.Htm,
+                    FileName = page.IsIndex ? ProjectFileTypes.IndexHtm : MakeFilename(page.FileName, ProjectFileTypes.Htm),
                     HtmlDocument = _fileHandler.ReadFile(TemplateSourcePath, page.PageLayoutTemplate),
                 };
 
@@ -155,7 +155,7 @@ namespace SSSP.Tools
             {
                 if (node.Attributes?.Count(x => x.Name == "page-content") == node.Attributes?.Count)
                 {
-                    var content = _fileHandler.ReadFile(ContentSourcePath, MakeFilename(page.PageTitle) + ProjectFileTypes.ContentFileType);
+                    var content = _fileHandler.ReadFile(ContentSourcePath, MakeFilename(page.FileName, ProjectFileTypes.ContentFileType));
                     return PerformBuildActions(content.RootNode, project, page);
                 }
 
@@ -171,7 +171,7 @@ namespace SSSP.Tools
                     {
                         hrefPath += PathText(page.PageSubdirectory) + WEB_PATH_SEPARATOR;
                     }
-                    hrefPath += page.IsIndex ? ProjectFileTypes.IndexHtm : MakeFilename(page.PageTitle) + ProjectFileTypes.Htm;
+                    hrefPath += page.IsIndex ? ProjectFileTypes.IndexHtm : MakeFilename(page.FileName, ProjectFileTypes.Htm);
                     var href = new HtmlNodeAttribute
                     {
                         Name = "href",
@@ -248,7 +248,7 @@ namespace SSSP.Tools
             return node;
         }
 
-        private string MakeFilename(string title) => title.RegexReplace("[^a-zA-Z0-9]", "-").ToLower();
+        private string MakeFilename(string title, string extension) => title + extension;
 
         private string PathText(string text) => text.RegexReplace(@"[^a-zA-Z0-9\/]", "");
     }
