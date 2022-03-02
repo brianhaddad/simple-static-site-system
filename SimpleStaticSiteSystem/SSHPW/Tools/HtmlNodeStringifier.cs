@@ -2,6 +2,7 @@
 using SSHPW.Classes;
 using SSHPW.Classes.Enums;
 using SSHPW.Extensions;
+using SSHPW.HttpValues;
 
 namespace SSHPW.Tools
 {
@@ -139,7 +140,8 @@ namespace SSHPW.Tools
             }
         }
 
-        private bool ContainsImmediateChildTextNode(HtmlNode htmlNode) => htmlNode.Children?.Any(x => x.IsTextOnlyNode) ?? false;
+        private bool ContainsImmediateChildTextNode(HtmlNode htmlNode)
+            => htmlNode.Children?.Any(x => x.IsTextOnlyNode || x.TagName.ToUpper() == CustomTagNames.TextReplacement.ToUpper()) ?? false;
         private string Casify(string text)
             => Options.TagCaseBehavior switch
             {

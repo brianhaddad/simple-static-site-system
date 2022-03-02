@@ -6,6 +6,7 @@
         bool FileExists(string path, string filename);
         bool DirectoryExists(string path);
         void DeleteDirectory(string path, bool force);
+        void CreateDirectory(string path);
         string[] GetFileLines(string path, string filename);
         string[] GetFilesInDirectory(string path = "", string filetypeFilter = "*.*");
         void LaunchWithDefaultEditor(string path, string filename);

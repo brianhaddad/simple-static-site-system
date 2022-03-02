@@ -1,6 +1,7 @@
 ﻿using SSClasses;
 using SSHFH;
 using SSHPW.Extensions;
+using SSHPW.HttpValues;
 using SSSP.Exceptions;
 using SSSP.ProjectValues;
 
@@ -91,11 +92,6 @@ namespace SSSP.Tools
 
         private HtmlNode PerformBuildActions(HtmlNode node, StaticSiteProject project, PageDefinition page)
         {
-            if (node.TagName?.ToUpper() == "TITLE")
-            {
-                node.Children.Insert(0, new HtmlNode(page.PageTitle + " - "));
-            }
-
             if (node.TagName?.ToUpper() == "LINK")
             {
                 var rel = node.Attributes?.FirstOrDefault(a => a.Name.ToUpper() == "REL");
@@ -121,7 +117,7 @@ namespace SSSP.Tools
                 }
             }
 
-            if (node.TagName?.ToUpper() == "TEXT-REPLACEMENT")
+            if (node.TagName?.ToUpper() == CustomTagNames.TextReplacement.ToUpper())
             {
                 if (node.Attributes?.Count(x => x.Name == "key") == node.Attributes?.Count)
                 {
@@ -133,16 +129,16 @@ namespace SSSP.Tools
                     }
                     return new HtmlNode(newValue);
                 }
-                if (node.Attributes?.Count(x => x.Name == "page-title") == node.Attributes?.Count)
+                if (node.Attributes?.Count(x => x.Name.ToUpper() == ReplacementKeys.PageTitle.ToUpper()) == node.Attributes?.Count)
                 {
                     return new HtmlNode(page.PageTitle);
                 }
-                if (node.Attributes?.Count(x => x.Name == "year") == node.Attributes?.Count)
+                if (node.Attributes?.Count(x => x.Name.ToUpper() == ReplacementKeys.Year.ToUpper()) == node.Attributes?.Count)
                 {
                     var date = DateTime.Now;
                     return new HtmlNode(date.Year.ToString());
                 }
-                if (node.Attributes?.Count(x => x.Name == "node-directory") == node.Attributes?.Count)
+                if (node.Attributes?.Count(x => x.Name.ToUpper() == ReplacementKeys.NodeDirectory.ToUpper()) == node.Attributes?.Count)
                 {
                     var display = page.PageSubdirectory.Contains("/")
                         ? page.PageSubdirectory.Substring(page.PageSubdirectory.LastIndexOf("/"))
@@ -151,20 +147,21 @@ namespace SSSP.Tools
                 }
             }
 
-            if (node.TagName?.ToUpper() == "NODE-REPLACEMENT" || node.Attributes?.Count(x => x.Name == "node-replacement") == 1)
+            if (node.TagName?.ToUpper() == CustomTagNames.NodeReplacement.ToUpper()
+                || node.Attributes?.Count(x => x.Name.ToUpper() == ReplacementKeys.NodeReplacement.ToUpper()) == 1)
             {
-                if (node.Attributes?.Count(x => x.Name == "page-content") == node.Attributes?.Count)
+                if (node.Attributes?.Count(x => x.Name.ToUpper() == ReplacementKeys.PageContent.ToUpper()) == node.Attributes?.Count)
                 {
                     var content = _fileHandler.ReadFile(ContentSourcePath, MakeFilename(page.FileName, ProjectFileTypes.ContentFileType));
                     return PerformBuildActions(content.RootNode, project, page);
                 }
 
-                if (node.Attributes?.Count(x => x.Name == "Nav") == node.Attributes?.Count)
+                if (node.Attributes?.Count(x => x.Name.ToUpper() == ReplacementKeys.Nav.ToUpper()) == node.Attributes?.Count)
                 {
                     return nav;
                 }
 
-                if (node.Attributes?.Count(x => x.Name == "page-link") == node.Attributes?.Count)
+                if (node.Attributes?.Count(x => x.Name.ToUpper() == ReplacementKeys.PageLink.ToUpper()) == node.Attributes?.Count)
                 {
                     var hrefPath = currentBaseUrl + WEB_PATH_SEPARATOR;
                     if (page.PageSubdirectory is not null && page.PageSubdirectory.Length > 0)
@@ -188,11 +185,12 @@ namespace SSSP.Tools
                     return linkNode;
                 }
 
-                if (node.Attributes?.Count(x => x.Name == "node-replacement") == 1
-                    && node.Children?.Count(c => c.TagName?.ToUpper() == "NAV-LINKS") == node.Children?.Count)
+                if (node.Attributes?.Count(x => x.Name.ToUpper() == CustomTagNames.NodeReplacement.ToUpper()) == 1
+                    && node.Children?.Count(c => c.TagName?.ToUpper() == CustomTagNames.NavLinks.ToUpper()) == node.Children?.Count)
                 {
                     //TODO: test this with a more complex folder structure
-                    var attribute = node.Attributes.First(x => x.Name == "node-replacement");
+                    //TODO: take care of some of the remaining magic strings
+                    var attribute = node.Attributes.First(x => x.Name.ToUpper() == CustomTagNames.NodeReplacement.ToUpper());
                     node.Attributes.Remove(attribute);
                     var baseLinkSnip = "Nav_link" + ProjectFileTypes.SnippetFileType;
                     var menuData = node.Children.First().Attributes.ToArray();

@@ -11,6 +11,7 @@ namespace SSHFH
         void WriteFile(string path, string fileName, HtmlDocument document);
         T ReadObject<T>(string path, string filename);
         void SaveObject<T>(string path, string filename, T obj);
+        void CreateDirectory(string path);
         bool CopyFile(string filename, string existingPath, string newPath);
     }
 }

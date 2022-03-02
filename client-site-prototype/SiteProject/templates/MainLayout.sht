@@ -1,7 +1,7 @@
 <!doctype template>
 <html>
     <head>
-        <title><text-replacement key="Site Title" /></title>
+        <title><text-replacement page-title /> - <text-replacement key="Site Title" /></title>
         <link rel="stylesheet" href="normalize.css" />
         <link rel="stylesheet" href="main.css" />
     </head>

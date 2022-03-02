@@ -18,9 +18,8 @@ namespace SSSP
         private string CurrentPath = "";
         private StaticSiteProject CurrentProject;
 
-        private bool DirtyUnsavedFile = false;
-        //TODO: allow wizard/user to define files that need to be written out
-        //but delay writing the files until saved?
+        private bool dirtyUnsavedFile = false;
+        
         private List<HtmlFile> unwrittenHtmlFiles = new();
 
         private string FullProjectFilename
@@ -37,7 +36,7 @@ namespace SSSP
         //TODO: maybe some kind of eventing and a way to register methods to run as event handlers?
         //When the DirtyUnsavedFile value changes, some things will need to be run in the interface
         //to enable or disable buttons.
-        public bool UnsavedChanges => DirtyUnsavedFile;
+        public bool UnsavedChanges => dirtyUnsavedFile;
         public Dictionary<string, string> GlobalProjectValues => CurrentProject?.GlobalProjectValues ?? new();
 
         public FileActionResult Compile(string env)
@@ -56,11 +55,13 @@ namespace SSSP
         public FileActionResult CreateNew(string path, string projectName, bool forceCreate = false)
         {
             //TODO: also check to see if file already exists?
-            if (DirtyUnsavedFile && !forceCreate)
+            if (dirtyUnsavedFile && !forceCreate)
             {
-                //Attempting to create new when the class was already managing an existing and unsaved file.
+                // Attempting to create new when the class was already managing an existing and unsaved file.
                 return FileActionResult.Failed("Dirty unsaved file.");
             }
+
+            path = Path.Combine(path, projectName);
 
             var badPath = path.IsInvalidFilePath();
             var badFileName = projectName.IsInvalidFileName();
@@ -86,13 +87,13 @@ namespace SSSP
             CurrentPath = path;
             CurrentFileName = projectName;
             CurrentProject = new StaticSiteProject();
-            DirtyUnsavedFile = true;
+            dirtyUnsavedFile = true;
             return FileActionResult.Successful();
         }
 
         public FileActionResult Open(string path, string projectName, bool forceOpen = false)
         {
-            if (DirtyUnsavedFile && !forceOpen)
+            if (dirtyUnsavedFile && !forceOpen)
             {
                 return FileActionResult.Failed("Dirty unsaved file.");
             }
@@ -113,11 +114,17 @@ namespace SSSP
         {
             try
             {
-                //TODO: if the directory doesn't exist it's a firsttime create.
-                //Need to create the folder structure in addition to saving the project file.
-                //Also need to save files in the unwritten HTML files list.
                 _fileHandler.SaveObject(CurrentPath, FullProjectFilename, CurrentProject);
-                DirtyUnsavedFile = false;
+                _fileHandler.CreateDirectory(Path.Combine(CurrentPath, ProjectFolders.Content));
+                _fileHandler.CreateDirectory(Path.Combine(CurrentPath, ProjectFolders.Snippets));
+                _fileHandler.CreateDirectory(Path.Combine(CurrentPath, ProjectFolders.Styles));
+                _fileHandler.CreateDirectory(Path.Combine(CurrentPath, ProjectFolders.Templates));
+                foreach (var file in unwrittenHtmlFiles)
+                {
+                    _fileHandler.WriteFile(file);
+                }
+                unwrittenHtmlFiles.Clear();
+                dirtyUnsavedFile = false;
                 return FileActionResult.Successful();
             }
             catch (Exception ex)
@@ -140,7 +147,7 @@ namespace SSSP
             {
                 CurrentProject.GlobalProjectValues.Add(key, value);
             }
-            DirtyUnsavedFile = true;
+            dirtyUnsavedFile = true;
             return FileActionResult.Successful();
         }
 
@@ -154,14 +161,40 @@ namespace SSSP
             {
                 pageDefinition.FileName = pageDefinition.PageTitle.RegexReplace("[^a-zA-Z0-9]", "-");
             }
+            //TODO: need to make sure this isn't a duplicate page.
+            //If duplicate, remove old and replace with new or just throw error?
+            //Also, the wizard should only be allowed to add one page, so maybe just clear out the page definition?
+            //But that would leave an orphaned content file, so that needs to be cleaned up too...
+            //But also the wizard hasn't written those files yet, so all we need to do is remove them from the
+            //unwritten files list...
             CurrentProject.PageDefinitions.Add(pageDefinition);
-            DirtyUnsavedFile = true;
-            if (!_fileHandler.FileExists(Path.Combine(CurrentPath, ProjectFolders.Templates), pageDefinition.PageLayoutTemplate))
+            dirtyUnsavedFile = true;
+
+            var templatePath = Path.Combine(CurrentPath, ProjectFolders.Templates);
+            if (!_fileHandler.FileExists(templatePath, pageDefinition.PageLayoutTemplate)
+                && !unwrittenHtmlFiles.Any(x => x.Path == templatePath && x.FileName == pageDefinition.PageLayoutTemplate))
             {
-                //TODO: create a default template file and add it to the unwritten HTML files list.
-                //Maybe check the current unwritten file list to make sure we're not adding a duplicate...
+                var newTemplate = new HtmlFile
+                {
+                    HtmlDocument = DefaultPageTemplate.GetDocument(),
+                    FileName = pageDefinition.PageLayoutTemplate,
+                    Path = templatePath,
+                };
+                unwrittenHtmlFiles.Add(newTemplate);
+                //TODO: if the file references any CSS files we need to handle those.
+                //Thoughts: can we keep those as embedded resource files and just copy them into place?
+                //Also the CSS stuff isn't finished.
+
+                //TODO: also need to write out the nav snippets... Also those aren't quite finished.
             }
-            //TODO: also need to add the page's content .shc file to the content folder via the unwritten HTML files list.
+            // Add the page's content .shc file to the content folder via the unwritten HTML files list.
+            var newContent = new HtmlFile
+            {
+                HtmlDocument = DefaultNewPageContent.GetContent(),
+                FileName = pageDefinition.FileName + ProjectFileTypes.ContentFileType,
+                Path = Path.Combine(CurrentPath, ProjectFolders.Content),
+            };
+            unwrittenHtmlFiles.Add(newContent);
             return FileActionResult.Successful();
         }
 
@@ -193,7 +226,7 @@ namespace SSSP
                 return FileActionResult.Failed($"Environment data for '{env}' already exists.");
             }
             CurrentProject.SiteBuildTargets.Add(env, baseUrl);
-            DirtyUnsavedFile = true;
+            dirtyUnsavedFile = true;
             return FileActionResult.Successful();
         }
     }

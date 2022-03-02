@@ -98,5 +98,6 @@ namespace SSHFH.Tools
         public bool DirectoryExists(string path) => Directory.Exists(path);
 
         public void DeleteDirectory(string path, bool force) => Directory.Delete(path, force);
+        public void CreateDirectory(string path) => Directory.CreateDirectory(path);
     }
 }

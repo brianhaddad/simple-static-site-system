@@ -1,5 +1,6 @@
 using SSSP;
 using SSSS.Enums;
+using SSSS.Helpers;
 using System.Windows;
 using System.Windows.Navigation;
 
@@ -34,7 +35,13 @@ namespace SSSS
         private void finishButton_Click(object sender, RoutedEventArgs e)
         {
             // Finish the wizard and return bound data to calling page
-            //TODO: attempt to create the files, including the directories, the MainLayout.sht template file, a content file for it... etc.
+            var project = (ISimpleStaticSiteProject)DataContext;
+            var result = project.Save();
+            if (!result.Success)
+            {
+                result.Alert();
+                return;
+            }
             OnReturn(new ReturnEventArgs<WizardResult>(WizardResult.Finished));
         }
     }

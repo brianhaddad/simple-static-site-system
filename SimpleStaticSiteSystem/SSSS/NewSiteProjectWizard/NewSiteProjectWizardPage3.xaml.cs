@@ -1,7 +1,6 @@
 using SSClasses;
 using SSHPW.Extensions;
 using SSSP;
-using SSSP.ProjectValues;
 using SSSS.Enums;
 using SSSS.Helpers;
 using System.Windows;
@@ -41,7 +40,8 @@ namespace SSSS
             }
 
             var project = (ISimpleStaticSiteProject)DataContext;
-            //TODO: so much to do here... Also need to update the interface for the page. :)
+            //TODO: update the interface for this page function. :)
+            //Should display a list of operations we're about to perform?
             var homePage = new PageDefinition
             {
                 IsIndex = (bool)isIndex.IsChecked,
@@ -50,7 +50,12 @@ namespace SSSS
                 NavMenuSortIndex = 0,
                 PageLayoutTemplate = "MainLayout.sht",
             };
-            project.AddPage(homePage);
+            var result = project.AddPage(homePage);
+            if (!result.Success)
+            {
+                result.Alert();
+                return;
+            }
 
             // Go to next wizard page
             var finalPage = new NewSiteProjectWizardFinalPage(project);

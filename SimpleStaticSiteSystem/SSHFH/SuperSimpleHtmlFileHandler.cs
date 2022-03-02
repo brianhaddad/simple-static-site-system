@@ -56,5 +56,7 @@ namespace SSHFH
                 _fileIO.DeleteDirectory(path, true);
             }
         }
+
+        public void CreateDirectory(string path) => _fileIO.CreateDirectory(path);
     }
 }

@@ -16,7 +16,7 @@ namespace SSHPW
             stringifierOptions = new HtmlStringificationOptions
             {
                 IndentString = "    ",
-                TagCaseBehavior = TagCaseOptions.UpperCase,
+                TagCaseBehavior = TagCaseOptions.LowerCase,
             };
             stringifier = new HtmlNodeStringifier(stringifierOptions);
             parser = new HtmlParser(new StateMachinePreParser(), new HtmlNodeTreeBuilder());
