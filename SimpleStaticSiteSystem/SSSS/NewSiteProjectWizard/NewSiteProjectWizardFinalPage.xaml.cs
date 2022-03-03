@@ -17,7 +17,6 @@ namespace SSSS
 
             // Bind wizard state to UI
             DataContext = project;
-            //TODO: display the actions that will be taken before the user clicks FINISH.
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
@@ -36,7 +35,7 @@ namespace SSSS
         {
             // Finish the wizard and return bound data to calling page
             var project = (ISimpleStaticSiteProject)DataContext;
-            var result = project.Save();
+            var result = project.Save(); //TODO: consider a generator/yield pattern to allow tracking of each task?
             if (!result.Success)
             {
                 result.Alert();

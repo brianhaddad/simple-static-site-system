@@ -40,8 +40,7 @@ namespace SSSS
             }
 
             var project = (ISimpleStaticSiteProject)DataContext;
-            //TODO: update the interface for this page function. :)
-            //Should display a list of operations we're about to perform?
+
             var homePage = new PageDefinition
             {
                 IsIndex = (bool)isIndex.IsChecked,

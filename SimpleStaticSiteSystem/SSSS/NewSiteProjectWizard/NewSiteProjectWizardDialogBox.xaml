@@ -3,4 +3,4 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:Class="SSSS.NewSiteProjectWizardDialogBox"
     ShowsNavigationUI="False"
-    Title="New Simple Static Site Project Wizard" />
+    Title="New Simple Static Site Project Wizard" Width="800" Height="300" />

@@ -2,9 +2,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:SSSS"
+    xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="av"
     x:Class="SSSS.NewSiteProjectWizardFinalPage"
     KeepAlive="True"
-    FocusManager.FocusedElement="{Binding ElementName=dataItem3TextBox}" 
+    FocusManager.FocusedElement="{Binding ElementName=finishButton}" 
     WindowTitle="New Site Project Wizard Final Page"
     >
     <Grid>
@@ -21,14 +22,14 @@
             <RowDefinition Height="10" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="1" Grid.Row="1">Data Item 3:</Label>
-        <TextBox Name="dataItem3TextBox" Grid.Column="2" Grid.Row="1" Padding="5,0,0,0" Text="{Binding Path=DataItem3}" />
+        <Label Grid.Column="1" Grid.Row="1" Content="Pending Files and Directories:"/>
+        <ItemsControl x:Name="listBox" Grid.Column="2" Grid.Row="1" Padding="5,5,0,0" ItemsSource="{Binding PendingFilesAndDirectories}" />
 
         <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button Name="backButton" Click="backButton_Click" Width="50" xml:space="preserve">&lt; _Back</Button>
-            <Button Name="nextButton" IsEnabled="False" Width="50" Margin="10,0,0,0" xml:space="preserve">_Next &gt;</Button>
-            <Button Name="cancelButton" Click="cancelButton_Click" Width="50" Margin="10,0,0,0" IsCancel="True">_Cancel</Button>
-            <Button Name="finishButton" Click="finishButton_Click" Width="50" Margin="10,0,0,0" IsDefault="True">_Finish</Button>
+            <Button x:Name="backButton" Click="backButton_Click" Width="50" xml:space="preserve" Content="&lt; _Back"/>
+            <Button x:Name="nextButton" IsEnabled="False" Width="50" Margin="10,0,0,0" xml:space="preserve" Content="_Next &gt;"/>
+            <Button x:Name="cancelButton" Click="cancelButton_Click" Width="50" Margin="10,0,0,0" IsCancel="True" Content="_Cancel"/>
+            <Button x:Name="finishButton" Click="finishButton_Click" Width="50" Margin="10,0,0,0" IsDefault="True" Content="_Finish"/>
         </StackPanel>
 
     </Grid>
