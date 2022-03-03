@@ -7,7 +7,7 @@ namespace SSSP
     {
         FileActionResult CreateNew(string path, string projectName, bool forceCreate = false);
         FileActionResult Open(string path, string projectName, bool forceOpen = false);
-        FileActionResult Save();
+        FileActionResult Save(); //TODO: separate wizard save function that returns IEnumerable<FileActionResult> and uses yield?
         FileActionResult Compile(string env);
 
         FileActionResult SetGlobalProjectValue(string key, string value);
@@ -24,5 +24,7 @@ namespace SSSP
         //General Readonly Access
         bool UnsavedChanges { get; }
         Dictionary<string, string> GlobalProjectValues { get; }
+        string[] PendingFilesAndDirectories { get; }
+        //TODO: a bool to know if a project is currently open/active
     }
 }

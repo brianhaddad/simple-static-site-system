@@ -27,6 +27,17 @@ namespace SSSP
                 ? CurrentFileName
                 : CurrentFileName + ProjectFileTypes.ProjectConfigType;
 
+        private string[] requiredProjectFolders = new[]
+        {
+            ProjectFolders.Content,
+            ProjectFolders.Snippets,
+            ProjectFolders.Styles,
+            ProjectFolders.Templates,
+        };
+
+        private string[] requiredProjectDirectories
+            => requiredProjectFolders.Select(f => Path.Combine(CurrentPath, f) + Path.DirectorySeparatorChar).ToArray();
+
         public SimpleStaticSiteProject(ISuperSimpleHtmlFileHandler fileHandler)
         {
             _fileHandler = fileHandler ?? throw new ArgumentNullException(nameof(fileHandler));
@@ -38,6 +49,22 @@ namespace SSSP
         //to enable or disable buttons.
         public bool UnsavedChanges => dirtyUnsavedFile;
         public Dictionary<string, string> GlobalProjectValues => CurrentProject?.GlobalProjectValues ?? new();
+        public string[] PendingFilesAndDirectories
+        {
+            get
+            {
+                var result = new List<string>();
+                var projectFile = Path.Combine(CurrentPath, FullProjectFilename);
+                result.Add(projectFile);
+                result.AddRange(requiredProjectDirectories);
+                var unwrittenFiles = unwrittenHtmlFiles.Select(f => Path.Combine(f.Path, f.FileName));
+                result.AddRange(unwrittenFiles);
+                return result
+                    .OrderBy(f => Path.GetDirectoryName(f))
+                    .ThenBy(f => Path.GetFileName(f))
+                    .ToArray();
+            }
+        }
 
         public FileActionResult Compile(string env)
         {
@@ -97,11 +124,14 @@ namespace SSSP
             {
                 return FileActionResult.Failed("Dirty unsaved file.");
             }
+
+            path = Path.Combine(path, projectName);
+
             CurrentPath = path;
             CurrentFileName = projectName;
             try
             {
-                CurrentProject = _fileHandler.ReadObject<StaticSiteProject>(CurrentPath, FullProjectFilename);
+                CurrentProject = _fileHandler.ReadObject<StaticSiteProject>(path, FullProjectFilename);
                 return FileActionResult.Successful();
             }
             catch (Exception ex)
@@ -115,10 +145,10 @@ namespace SSSP
             try
             {
                 _fileHandler.SaveObject(CurrentPath, FullProjectFilename, CurrentProject);
-                _fileHandler.CreateDirectory(Path.Combine(CurrentPath, ProjectFolders.Content));
-                _fileHandler.CreateDirectory(Path.Combine(CurrentPath, ProjectFolders.Snippets));
-                _fileHandler.CreateDirectory(Path.Combine(CurrentPath, ProjectFolders.Styles));
-                _fileHandler.CreateDirectory(Path.Combine(CurrentPath, ProjectFolders.Templates));
+                foreach (var dir in requiredProjectDirectories)
+                {
+                    _fileHandler.CreateDirectory(dir);
+                }
                 foreach (var file in unwrittenHtmlFiles)
                 {
                     _fileHandler.WriteFile(file);
@@ -159,7 +189,7 @@ namespace SSSP
             }
             if (pageDefinition.FileName.IsNullEmptyOrWhiteSpace())
             {
-                pageDefinition.FileName = pageDefinition.PageTitle.RegexReplace("[^a-zA-Z0-9]", "-");
+                pageDefinition.FileName = pageDefinition.PageTitle.RegexReplace("[^a-zA-Z0-9]", "_");
             }
             //TODO: need to make sure this isn't a duplicate page.
             //If duplicate, remove old and replace with new or just throw error?
