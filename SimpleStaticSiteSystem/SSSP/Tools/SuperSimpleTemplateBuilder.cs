@@ -12,22 +12,18 @@ namespace SSSP.Tools
         private readonly ISuperSimpleHtmlFileHandler _fileHandler;
         //TODO: this file has a lot of random strings scattered throughout
         //Some of these values will be required in another class probably...
-        private const string FILE_PATH_SEPARATOR = @"\";
         private const string WEB_PATH_SEPARATOR = @"/";
-
-        private const string BUILD_SUBDIR = FILE_PATH_SEPARATOR + ProjectFolders.Build;
 
         private string currentBuildPath = "";
         private string currentBaseUrl = "";
         private string currentEnv = "";
         private HtmlNode nav;
 
-        private string FullBuildToPath => currentBuildPath + BUILD_SUBDIR + FILE_PATH_SEPARATOR + currentEnv;
-        private string FullSourcePath => currentBuildPath + FILE_PATH_SEPARATOR;
-        private string TemplateSourcePath => FullSourcePath + ProjectFolders.Templates;
-        private string ContentSourcePath => FullSourcePath + ProjectFolders.Content;
-        private string SnippetsSourcePath => FullSourcePath + ProjectFolders.Snippets;
-        private string StylesSourcePath => FullSourcePath + ProjectFolders.Styles;
+        private string FullBuildToPath => Path.Combine(currentBuildPath, ProjectFolders.Build, currentEnv);
+        private string TemplateSourcePath => Path.Combine(currentBuildPath, ProjectFolders.Templates);
+        private string ContentSourcePath => Path.Combine(currentBuildPath, ProjectFolders.Content);
+        private string SnippetsSourcePath => Path.Combine(currentBuildPath, ProjectFolders.Snippets);
+        private string StylesSourcePath => Path.Combine(currentBuildPath, ProjectFolders.Styles);
 
         public SuperSimpleTemplateBuilder(ISuperSimpleHtmlFileHandler fileHandler)
         {
@@ -70,7 +66,7 @@ namespace SSSP.Tools
                 var fullPath = FullBuildToPath;
                 if (page.PageSubdirectory is not null)
                 {
-                    fullPath += FILE_PATH_SEPARATOR + PathText(page.PageSubdirectory);
+                    fullPath = Path.Combine(fullPath, PathText(page.PageSubdirectory));
                 }
                 var pageHtml = new HtmlFile
                 {
@@ -106,9 +102,9 @@ namespace SSSP.Tools
                         var stylesPath = ProjectFolders.Styles;
                         var hrefPath = currentBaseUrl + WEB_PATH_SEPARATOR + stylesPath + WEB_PATH_SEPARATOR + filename;
                         node.Attributes[node.Attributes.IndexOf(href)].Value = hrefPath;
-                        var fileAlreadyCopiedToOutput = _fileHandler.FileExists(FullBuildToPath + FILE_PATH_SEPARATOR + stylesPath, filename);
+                        var fileAlreadyCopiedToOutput = _fileHandler.FileExists(Path.Combine(FullBuildToPath, stylesPath), filename);
                         if (!fileAlreadyCopiedToOutput &&
-                            !_fileHandler.CopyFile(filename, StylesSourcePath, FullBuildToPath + FILE_PATH_SEPARATOR + stylesPath))
+                            !_fileHandler.CopyFile(filename, StylesSourcePath, Path.Combine(FullBuildToPath, stylesPath)))
                         {
                             throw new BuildException($"Could not copy file: {filename}");
                         }
