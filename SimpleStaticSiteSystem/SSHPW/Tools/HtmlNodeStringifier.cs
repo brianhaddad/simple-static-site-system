@@ -141,7 +141,7 @@ namespace SSHPW.Tools
         }
 
         private bool ContainsImmediateChildTextNode(HtmlNode htmlNode)
-            => htmlNode.Children?.Any(x => x.IsTextOnlyNode || x.TagName.ToUpper() == CustomTagNames.TextReplacement.ToUpper()) ?? false;
+            => htmlNode.Children?.Any(x => x.IsTextOnlyNode || x.TagName?.ToUpper() == CustomTagNames.TextReplacement.ToUpper()) ?? false;
         private string Casify(string text)
             => Options.TagCaseBehavior switch
             {
