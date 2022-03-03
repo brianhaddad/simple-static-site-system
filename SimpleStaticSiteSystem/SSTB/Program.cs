@@ -3,7 +3,6 @@ using SSClasses;
 using SSHFH;
 using SSHFH.Tools;
 using SSHPW;
-using SSHPW.Extensions;
 using SSSP;
 using SSSP.ProjectValues;
 
@@ -13,7 +12,7 @@ var testProjectName = "SiteProject";
 var envDir = Environment.CurrentDirectory;
 //Warning: this assumes you are running the solution out of the default repo folder name and not a custom folder name.
 var projName = "simple-static-site-system";
-var testProjectPath = envDir.Substring(0, envDir.IndexOf(projName) + projName.Length) + @"\client-site-prototype\SiteProject";
+var testProjectPath = envDir.Substring(0, envDir.IndexOf(projName) + projName.Length) + @"\client-site-prototype";
 
 Console.WriteLine(testProjectPath);
 Console.WriteLine("Write test files? [Y/n]");
@@ -31,7 +30,7 @@ if (userEntry == "Y")
 
     //Default: add a dev build target. (maybe do this during first step?)
     //Optional: get build target data for the actual production site:
-    siteProject.AddBuildTarget("dev", testProjectPath.Replace("\\", "/") + "/build/dev");
+    siteProject.AddBuildTarget("dev", Path.Combine(testProjectPath, testProjectName).Replace("\\", "/") + "/build/dev");
 
     //Next step: build an index/home page?
     //Add/define the templates. These will need to be written out to their locations...
