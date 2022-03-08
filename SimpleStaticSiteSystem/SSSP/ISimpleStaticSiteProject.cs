@@ -25,6 +25,6 @@ namespace SSSP
         bool UnsavedChanges { get; }
         Dictionary<string, string> GlobalProjectValues { get; }
         string[] PendingFilesAndDirectories { get; }
-        //TODO: a bool to know if a project is currently open/active
+        bool ValidProjectLoaded { get; }
     }
 }

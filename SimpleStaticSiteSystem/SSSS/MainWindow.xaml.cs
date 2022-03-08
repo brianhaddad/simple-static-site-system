@@ -3,6 +3,7 @@ using SSHFH.Tools;
 using SSHPW;
 using SSSP;
 using SSSS;
+using SSSS.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,14 +32,14 @@ namespace SSSS
         {
             InitializeComponent();
             SiteProject = new SimpleStaticSiteProject(new SuperSimpleHtmlFileHandler(new FileIo(), new SuperSimpleHtmlParserWriter()));
-            EvaluateButtonStates();
-            EvaluateDevMode();
+            EvaluateEnabledStates();
+            EvaluateProjectModes();
         }
 
         private void SystemModeButton_Click(object sender, RoutedEventArgs e)
         {
             DevMode = !DevMode;
-            EvaluateDevMode();
+            EvaluateProjectModes();
         }
 
         private void NewButton_Click(object sender, RoutedEventArgs e)
@@ -52,24 +53,38 @@ namespace SSSS
             {
                 SiteProject.Save();
             }
+            EvaluateProjectModes();
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
 
+            EvaluateProjectModes();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            if (SiteProject.UnsavedChanges)
+            {
+                var result = SiteProject.Save();
+                if (!result.Success)
+                {
+                    result.Alert();
+                }
+            }
+        }
+
+        private void BuildProject_Click(object sender, RoutedEventArgs e)
+        {
 
         }
 
-        private void EvaluateButtonStates()
+        private void EvaluateEnabledStates()
         {
             SaveButton.IsEnabled = SiteProject.UnsavedChanges;
         }
 
-        private void EvaluateDevMode()
+        private void EvaluateProjectModes()
         {
             if (DevMode)
             {
@@ -80,6 +95,15 @@ namespace SSSS
             {
                 SystemModeButton.Content = FindResource("DesignerMode");
                 NewButton.Visibility = Visibility.Collapsed;
+            }
+
+            if (SiteProject.ValidProjectLoaded)
+            {
+                LoadedProjectToolbar.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                LoadedProjectToolbar.Visibility = Visibility.Collapsed;
             }
         }
     }

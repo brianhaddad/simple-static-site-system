@@ -47,6 +47,10 @@ namespace SSSP
         //TODO: maybe some kind of eventing and a way to register methods to run as event handlers?
         //When the DirtyUnsavedFile value changes, some things will need to be run in the interface
         //to enable or disable buttons.
+        public bool ValidProjectLoaded
+            => !(CurrentProject is null)
+            && !CurrentPath.IsNullEmptyOrWhiteSpace()
+            && !CurrentFileName.IsNullEmptyOrWhiteSpace();
         public bool UnsavedChanges => dirtyUnsavedFile;
         public Dictionary<string, string> GlobalProjectValues => CurrentProject?.GlobalProjectValues ?? new();
         public string[] PendingFilesAndDirectories

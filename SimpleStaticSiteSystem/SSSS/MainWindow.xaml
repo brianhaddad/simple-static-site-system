@@ -28,6 +28,11 @@
                     <Image Source="/019-files.png" Width="32" />
                 </Button>
             </ToolBar>
+            <ToolBar Name="LoadedProjectToolbar">
+                <Button x:Name="BuildProject" Click="BuildProject_Click">
+                    <Image Source="/download.png" Width="32" />
+                </Button>
+            </ToolBar>
         </ToolBarTray>
         <Grid />
     </DockPanel>
