@@ -41,7 +41,7 @@ namespace SSSP.Tools
 
             _fileHandler.RemoveDirectoryIfExists(FullBuildToPath);
 
-            currentBaseUrl = project.SiteBuildTargets[currentEnv];
+            currentBaseUrl = project.SiteBuildTargets[currentEnv].TargetBaseUrl;
             var results = new List<HtmlFile>();
 
             //TODO: nav can be shared between pages now due to decision to implement absolute URLs,

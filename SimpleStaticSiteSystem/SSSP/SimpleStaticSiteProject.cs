@@ -251,7 +251,7 @@ namespace SSSP
         {
             if (CurrentProject.SiteBuildTargets is null)
             {
-                CurrentProject.SiteBuildTargets = new Dictionary<string, string>();
+                CurrentProject.SiteBuildTargets = new Dictionary<string, BuildTargetDefinition>();
             }
             if (CurrentProject.SiteBuildTargets.ContainsKey(env))
             {
@@ -259,7 +259,11 @@ namespace SSSP
                 //Maybe another force update bool value for the method?
                 return FileActionResult.Failed($"Environment data for '{env}' already exists.");
             }
-            CurrentProject.SiteBuildTargets.Add(env, baseUrl);
+            var buildTargetData = new BuildTargetDefinition
+            {
+                TargetBaseUrl = baseUrl,
+            };
+            CurrentProject.SiteBuildTargets.Add(env, buildTargetData);
             dirtyUnsavedFile = true;
             return FileActionResult.Successful();
         }
