@@ -29,6 +29,7 @@
                 </Button>
             </ToolBar>
             <ToolBar Name="LoadedProjectToolbar">
+                <ComboBox x:Name="BuildTargetSelection" HorizontalAlignment="Left" VerticalAlignment="Center" Width="120"/>
                 <Button x:Name="BuildProject" Click="BuildProject_Click">
                     <Image Source="/download.png" Width="32" />
                 </Button>

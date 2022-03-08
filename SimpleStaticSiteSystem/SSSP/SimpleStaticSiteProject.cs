@@ -52,7 +52,10 @@ namespace SSSP
             && !CurrentPath.IsNullEmptyOrWhiteSpace()
             && !CurrentFileName.IsNullEmptyOrWhiteSpace();
         public bool UnsavedChanges => dirtyUnsavedFile;
-        public Dictionary<string, string> GlobalProjectValues => CurrentProject?.GlobalProjectValues ?? new();
+        public Dictionary<string, string> GlobalProjectValues
+            => CurrentProject?.GlobalProjectValues ?? new();
+        public Dictionary<string, BuildTargetDefinition> ProjectBuildTargetDefinitions
+            => CurrentProject?.SiteBuildTargets ?? new();
         public string[] PendingFilesAndDirectories
         {
             get
@@ -70,7 +73,7 @@ namespace SSSP
             }
         }
 
-        public FileActionResult Compile(string env)
+        public FileActionResult Build(string env)
         {
             try
             {
@@ -247,23 +250,22 @@ namespace SSSP
             throw new NotImplementedException();
         }
 
-        public FileActionResult AddBuildTarget(string env, string baseUrl)
+        public FileActionResult AddBuildTarget(string env, BuildTargetDefinition buildDefinition)
         {
             if (CurrentProject.SiteBuildTargets is null)
             {
                 CurrentProject.SiteBuildTargets = new Dictionary<string, BuildTargetDefinition>();
             }
+
             if (CurrentProject.SiteBuildTargets.ContainsKey(env))
             {
-                //TODO: might actually want to let the value be updated...
-                //Maybe another force update bool value for the method?
-                return FileActionResult.Failed($"Environment data for '{env}' already exists.");
+                CurrentProject.SiteBuildTargets[env] = buildDefinition;
             }
-            var buildTargetData = new BuildTargetDefinition
+            else
             {
-                TargetBaseUrl = baseUrl,
-            };
-            CurrentProject.SiteBuildTargets.Add(env, buildTargetData);
+                CurrentProject.SiteBuildTargets.Add(env, buildDefinition);
+            }
+
             dirtyUnsavedFile = true;
             return FileActionResult.Successful();
         }

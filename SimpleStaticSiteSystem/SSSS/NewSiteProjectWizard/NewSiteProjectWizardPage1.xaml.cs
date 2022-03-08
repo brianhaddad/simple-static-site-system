@@ -58,7 +58,7 @@ namespace SSSS
                 userSelectedFolderLocation.Focus();
                 if (!result.Success)
                 {
-                    result.Alert();
+                    result.Alert("Invalid Project");
                 }
             }
         }

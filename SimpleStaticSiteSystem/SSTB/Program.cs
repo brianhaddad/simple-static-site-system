@@ -30,7 +30,11 @@ if (userEntry == "Y")
 
     //Default: add a dev build target. (maybe do this during first step?)
     //Optional: get build target data for the actual production site:
-    siteProject.AddBuildTarget("dev", Path.Combine(testProjectPath, testProjectName).Replace("\\", "/") + "/build/dev");
+    var buildDefinition = new BuildTargetDefinition
+    {
+        TargetBaseUrl = Path.Combine(testProjectPath, testProjectName).Replace("\\", "/") + "/build/dev",
+    };
+    siteProject.AddBuildTarget("dev", buildDefinition);
 
     //Next step: build an index/home page?
     //Add/define the templates. These will need to be written out to their locations...
@@ -97,7 +101,7 @@ if (userEntry == "Y")
     }
     else
     {
-        var result = siteProject.Compile("dev");
+        var result = siteProject.Build("dev");
         if (!result.Success)
         {
             Console.WriteLine(result.Message);

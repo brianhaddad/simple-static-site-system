@@ -30,6 +30,5 @@ https://wpf-tutorial.com/commands/using-commands/
 <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 
 TODO Next:
-build expansion: not just a string,string dictionary, but a string,[new class object] to store more data.
-build button (with dropdown to select which build?)
+Really, really, really want to be able to open existing projects. lol
 preview window (opens with a button? or always visible?)

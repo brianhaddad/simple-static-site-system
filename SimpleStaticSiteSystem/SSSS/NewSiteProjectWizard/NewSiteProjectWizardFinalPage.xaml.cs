@@ -38,7 +38,7 @@ namespace SSSS
             var result = project.Save(); //TODO: consider a generator/yield pattern to allow tracking of each task?
             if (!result.Success)
             {
-                result.Alert();
+                result.Alert("Save Failed");
                 return;
             }
             OnReturn(new ReturnEventArgs<WizardResult>(WizardResult.Finished));

@@ -5,14 +5,13 @@ namespace SSSS.Helpers
 {
     public static class WpfHelpers
     {
-        public static void Alert(this FileActionResult result)
+        public static void Alert(this FileActionResult result, string windowTitle = "File Action Result Message")
         {
             var message = !string.IsNullOrEmpty(result.Message)
                 ? result.Message
                 : result.Success
                     ? "Success!"
                     : "Failure, but we don't know why!";
-            var windowTitle = "File Action Result Message";
             var icon = result.Success
                 ? MessageBoxImage.Information
                 : MessageBoxImage.Error;

@@ -3,6 +3,7 @@ using SSHPW.Extensions;
 using SSSP;
 using SSSS.Enums;
 using SSSS.Helpers;
+using System.IO;
 using System.Windows;
 using System.Windows.Navigation;
 
@@ -52,9 +53,18 @@ namespace SSSS
             var result = project.AddPage(homePage);
             if (!result.Success)
             {
-                result.Alert();
+                result.Alert("Could Not Add Page");
                 return;
             }
+
+            // Build Target:
+            // Optional: get build target data for the actual production site?
+            var devBuildUrl = Path.Combine(project.UserSelectedFolderLocation, project.UserSelectedFileName).Replace("\\", "/") + "/build/dev";
+            var buildDefinition = new BuildTargetDefinition
+            {
+                TargetBaseUrl = devBuildUrl,
+            };
+            project.AddBuildTarget("dev", buildDefinition);
 
             // Go to next wizard page
             var finalPage = new NewSiteProjectWizardFinalPage(project);

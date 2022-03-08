@@ -44,21 +44,20 @@ namespace SSSS
 
         private void NewButton_Click(object sender, RoutedEventArgs e)
         {
-            //actually need a wizard or popup to fill in this data...
-            //var result = SiteProject.CreateNew("", "", false);
             var wizard = new NewSiteProjectWizardDialogBox(SiteProject);
             var showDialog = wizard.ShowDialog();
             var dialogResult = showDialog is not null && (bool)showDialog;
             if (dialogResult)
             {
+                // This Save() is superfluous. Not sure what I want to do...
                 SiteProject.Save();
             }
-            EvaluateProjectModes();
+            EvaluateInterface();
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
-
+            //TODO: I really need to be able to open existing projects...
             EvaluateProjectModes();
         }
 
@@ -69,14 +68,29 @@ namespace SSSS
                 var result = SiteProject.Save();
                 if (!result.Success)
                 {
-                    result.Alert();
+                    result.Alert("Save Failed");
                 }
             }
         }
 
         private void BuildProject_Click(object sender, RoutedEventArgs e)
         {
+            var buildDefinition = BuildTargetSelection.SelectedValue as string;
+            if (buildDefinition is not null)
+            {
+                var result = SiteProject.Build(buildDefinition);
+                if (!result.Success)
+                {
+                    result.Alert("Build Failed");
+                }
+            }
+        }
 
+        private void EvaluateInterface()
+        {
+            EvaluateEnabledStates();
+            EvaluateProjectModes();
+            PopulateDropdowns();
         }
 
         private void EvaluateEnabledStates()
@@ -105,6 +119,18 @@ namespace SSSS
             {
                 LoadedProjectToolbar.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void PopulateDropdowns()
+        {
+            // BuildTargetSelection
+            BuildTargetSelection.Items.Clear();
+            var buildTargets = SiteProject.ProjectBuildTargetDefinitions;
+            foreach (var buildTarget in buildTargets)
+            {
+                BuildTargetSelection.Items.Add(buildTarget.Key);
+            }
+            BuildTargetSelection.SelectedIndex = 0;
         }
     }
 }
