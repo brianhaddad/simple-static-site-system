@@ -132,8 +132,6 @@ namespace SSSP
                 return FileActionResult.Failed("Dirty unsaved file.");
             }
 
-            path = Path.Combine(path, projectName);
-
             CurrentPath = path;
             CurrentFileName = projectName;
             try

@@ -2,22 +2,11 @@
 using SSHFH.Tools;
 using SSHPW;
 using SSSP;
-using SSSS;
 using SSSS.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Forms;
+using System.IO;
+using SSSP.ProjectValues;
 
 namespace SSSS
 {
@@ -57,8 +46,23 @@ namespace SSSS
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: I really need to be able to open existing projects...
-            EvaluateProjectModes();
+            var fileExtensionFilter = $"*{ProjectFileTypes.ProjectConfigType}";
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = $"Simple Static Site Project Config files ({fileExtensionFilter})|{fileExtensionFilter}",
+            };
+            var dialogResult = openFileDialog.ShowDialog();
+            if (dialogResult == System.Windows.Forms.DialogResult.OK)
+            {
+                var fileName = openFileDialog.SafeFileName;
+                var path = Path.GetDirectoryName(openFileDialog.FileName);
+                var result = SiteProject.Open(path, fileName);
+                if (!result.Success)
+                {
+                    result.Alert();
+                }
+            }
+            EvaluateInterface();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
