@@ -12,8 +12,21 @@ var testProjectName = "SiteProject";
 var envDir = Environment.CurrentDirectory;
 //Warning: this assumes you are running the solution out of the default repo folder name and not a custom folder name.
 var projName = "simple-static-site-system";
-var testProjectPath = envDir.Substring(0, envDir.IndexOf(projName) + projName.Length) + @"\client-site-prototype";
+var testProjectPath = envDir[..(envDir.IndexOf(projName) + projName.Length)] + @"\client-site-prototype";
 
+//Curiosity:
+var testProjectRoot = Path.GetPathRoot(testProjectPath);
+if (testProjectRoot is not null)
+{
+    var testPathMinusRoot = testProjectPath.Substring(testProjectRoot.Length);
+    var testPath = testProjectRoot + testPathMinusRoot[..testPathMinusRoot.IndexOf(Path.DirectorySeparatorChar)];
+    Console.WriteLine("Short path first:");
+    Console.WriteLine(Path.GetRelativePath(testPath, testProjectPath));
+    Console.WriteLine("Long path first:");
+    Console.WriteLine(Path.GetRelativePath(testProjectPath, testPath));
+}
+
+//Begin for realsies
 Console.WriteLine(testProjectPath);
 Console.WriteLine("Write test files? [Y/n]");
 
